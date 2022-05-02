@@ -27,11 +27,12 @@
             </Grid.RowDefinitions>
             <Label Content="My Mvvm App" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             <Label Grid.Row="1" Content="Username" HorizontalContentAlignment="Center" Style="{DynamicResource SmallLabelStyle}"/>
-            <TextBox Grid.Row="2" HorizontalContentAlignment="Center" Style="{DynamicResource LoginTextBox}"/>
+            <TextBox Grid.Row="2" HorizontalContentAlignment="Center" Text="{Binding Username}" 
+                     Style="{DynamicResource LoginTextBox}"/>
             <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
-            <PasswordBox  Grid.Row="4" Style="{DynamicResource LoginPasswordBox}"/>
+            <PasswordBox Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
-                    FontSize="20" Command="{Binding LoginCommand}"/>
+                    FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"/>
         </Grid>
     </Grid>
 </Page>
