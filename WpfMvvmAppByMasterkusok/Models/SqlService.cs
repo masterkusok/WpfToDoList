@@ -8,7 +8,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 {
     internal class SqlService : IDbService
     {
-        private string _connectionString = "Database=masterkusok_bd;Data Source = db4free.net; User Id = masterkusok; Password=12345678";
+        private string _connectionString;
         MySqlConnection _connection;
         public SqlService()
         {
