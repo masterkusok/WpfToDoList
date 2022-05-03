@@ -1,4 +1,6 @@
-﻿namespace WpfMvvmAppByMasterkusok.Models
+﻿using System.Threading.Tasks;
+
+namespace WpfMvvmAppByMasterkusok.Models
 {
     interface IDbService
     {

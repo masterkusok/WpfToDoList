@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
 namespace WpfMvvmAppByMasterkusok.Models
@@ -39,14 +40,15 @@ namespace WpfMvvmAppByMasterkusok.Models
             throw new NotImplementedException();
         }
 
+        
         public User GetUser(string username, string password)
         {
+            User user = null;
             _connection.Open();
-            if(_connection.State == System.Data.ConnectionState.Open)
+            if (_connection.State == System.Data.ConnectionState.Open)
             {
-                User user = null;
                 MySqlCommand command = new MySqlCommand($"SELECT * FROM todo_users WHERE username = '{username}'" +
-                    $"AND password = '{password}'",_connection);
+                    $"AND password = '{password}'", _connection);
                 MySqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -56,17 +58,16 @@ namespace WpfMvvmAppByMasterkusok.Models
                     {
                         toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(json_string);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine(ex.ToString());
                     }
                     user = new User(username, password, toDoItems);
-                    _connection.Close();
-                    return user;
+                    break;
                 }
             }
             _connection.Close();
-            return null;
+            return user;
         }
 
         public bool UpdateUser(User user)

@@ -28,17 +28,32 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 LoginBtnClicked(obj);
             });
         }
+
         private void LoginBtnClicked(object parameter)
         {
-            _password = (parameter as PasswordBox).Password;
+            GetPasswordFromPasswordBox((PasswordBox)parameter);
             if (_username != null && _password != null)
             {
-                User user = _dbService.GetUser(_username, _password);
-                if (user != null)
-                {
-                    _navigationStore.CurrentPage = new MainPage();
-                    return;
-                }
+                User user = GetUserFromDb();
+                ExecuteNavigation(user);
+            }
+        }
+        private void GetPasswordFromPasswordBox(PasswordBox box)
+        {
+            _password = box.Password;
+        }
+
+        private User GetUserFromDb()
+        {
+            return _dbService.GetUser(_username, _password);
+        }
+
+        private void ExecuteNavigation(User user)
+        {
+            if(user != null)
+            {
+                _navigationStore.CurrentPage = new MainPage();
+                return;
             }
         }
     }
