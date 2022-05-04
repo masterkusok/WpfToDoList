@@ -7,7 +7,6 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="LoginPage">
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -25,14 +24,27 @@
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
+            <!-- This popup is being opened while model is performing request to database -->
+            <Popup Placement="Center" IsOpen="{Binding PopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                <Grid Background="#1f1f1f">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
+                               VerticalContentAlignment="Center" Content="Wait a second..."/>
+                </Grid>
+            </Popup>
+            
             <Label Content="My Mvvm App" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
-            <Label Grid.Row="1" Content="Username" HorizontalContentAlignment="Center" Style="{DynamicResource SmallLabelStyle}"/>
+            <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
             <TextBox Grid.Row="2" HorizontalContentAlignment="Center" Text="{Binding Username}" 
-                     Style="{DynamicResource LoginTextBox}"/>
+                     Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
             <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
-            <PasswordBox Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
+            <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
-                    FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"/>
+                    FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
+                    IsEnabled="{Binding ControlsEnabled}"/>
         </Grid>
     </Grid>
 </Page>

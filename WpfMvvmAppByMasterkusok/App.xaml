@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
+        
         <!-- All window style -->
         <Style TargetType="Window" x:Key="WindowStyle">
             <Setter Property="Background">
@@ -73,6 +74,11 @@
                     </Setter>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+        <!--Cool round popup-->
+        <Style x:Key="LoginOrRegisterPopup" TargetType="Popup">
+            <Setter Property="Width" Value="350"/>
+            <Setter Property="Height" Value="180"/>
         </Style>
     </Application.Resources>
 </Application>

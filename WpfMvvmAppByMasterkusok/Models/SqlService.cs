@@ -47,10 +47,10 @@ namespace WpfMvvmAppByMasterkusok.Models
             _connection.Open();
             if (_connection.State == System.Data.ConnectionState.Open)
             {
-                MySqlCommand command = new MySqlCommand($"SELECT * FROM todo_users WHERE username = '{username}'" +
+                MySqlCommand command = new MySqlCommand($"SELECT * FROM users WHERE username = '{username}'" +
                     $"AND password = '{password}'", _connection);
                 MySqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
+                if(reader.Read())
                 {
                     string json_string = reader["todo_json"].ToString();
                     List<ToDoItem> toDoItems = null;
@@ -63,7 +63,6 @@ namespace WpfMvvmAppByMasterkusok.Models
                         Console.WriteLine(ex.ToString());
                     }
                     user = new User(username, password, toDoItems);
-                    break;
                 }
             }
             _connection.Close();
