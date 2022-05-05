@@ -15,9 +15,11 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private string _username;
         private bool _controlsEnabled = true;
         private bool _popupOpened;
+        private bool _errorPopupOpened;
         public string Username { get =>  _username; set => _username = value; }
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
         public bool PopupOpened { get => _popupOpened; set => _popupOpened = value; }
+        public bool ErrorPopupOpened { get => _errorPopupOpened; set => _errorPopupOpened = value;}
         private IDbService _dbService;
         public ICommand LoginCommand
         {
@@ -41,13 +43,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 BlockAllControls();
                 User user = null;
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
+                    await Task.Delay(1500);
                     user = GetUserFromDb();
                 });
                 ExecuteNavigation(user);
                 UnlockAllControls();
+                return;
             }
+            DisplayErrorPopup();
         }
         private void GetPasswordFromPasswordBox(PasswordBox box)
         {
@@ -79,6 +84,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 _navigationStore.CurrentPage = new MainPage();
                 return;
             }
+            DisplayErrorPopup();
+        }
+
+        private async void DisplayErrorPopup()
+        {
+            _errorPopupOpened = true;
+            NotifyOnPropertyChanged(nameof(ErrorPopupOpened));
+            await Task.Delay(6500);
+            _errorPopupOpened = false;
+            NotifyOnPropertyChanged(nameof(ErrorPopupOpened));
         }
     }
 }

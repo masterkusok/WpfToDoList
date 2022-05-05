@@ -75,10 +75,35 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        <!--Cool round popup-->
+
         <Style x:Key="LoginOrRegisterPopup" TargetType="Popup">
+            <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="Width" Value="350"/>
             <Setter Property="Height" Value="180"/>
+            <Setter Property="PopupAnimation" Value="Fade"/>
+        </Style>
+        
+        <!-- Spinning loader animation -->
+        <Style x:Key="SpinningImage" TargetType="Image">
+            <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
+            <Setter Property="Image.RenderTransform">
+                <Setter.Value>
+                    <RotateTransform Angle="0"/>
+                </Setter.Value> 
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:1"
+                                Storyboard.TargetProperty="RenderTransform.Angle"
+                                From="0" To="360" RepeatBehavior="Forever"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Application.Resources>
 </Application>

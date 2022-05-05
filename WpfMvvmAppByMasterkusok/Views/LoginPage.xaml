@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="LoginPage">
+      Name="loginPage"
+      Title="Login page">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -24,6 +25,7 @@
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
+            
             <!-- This popup is being opened while model is performing request to database -->
             <Popup Placement="Center" IsOpen="{Binding PopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#1f1f1f">
@@ -33,12 +35,23 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="Wait a second..."/>
+                    <Image Style="{DynamicResource SpinningImage}"  HorizontalAlignment="Center"
+                           Grid.Row="1" Source="/WpfMvvmAppByMasterkusok;component/Images/loader_white.png"/>
                 </Grid>
             </Popup>
-            
-            <Label Content="My Mvvm App" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
+            <!-- This popup is being opened if db can't find such user-->
+            <Popup Placement="Right" PlacementTarget="{Binding ElementName=label}"
+                   Width="210" Height="110"
+                   IsOpen="{Binding ErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                <Grid Background="#bf2a2a">
+                    <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
+                               VerticalContentAlignment="Center" Content="Invalid password or username"
+                           FontSize="15"/>
+                </Grid>
+            </Popup>
+            <Label x:Name="label" Content="My Mvvm App" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
-            <TextBox Grid.Row="2" HorizontalContentAlignment="Center" Text="{Binding Username}" 
+            <TextBox Grid.Row="2" HorizontalContentAlignment="Left" Text="{Binding Username}" 
                      Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
             <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
             <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
