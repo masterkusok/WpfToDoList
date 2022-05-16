@@ -32,7 +32,28 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         public bool AddUser(string username, string password)
         {
-            throw new NotImplementedException();
+            if(GetUser(username, password) is not NotExistingUser)
+            {
+                return MakeInsertRequestToSql(username, password);
+            }
+            return false;
+        }
+
+        private bool MakeInsertRequestToSql(string username, string password)
+        {
+            _connection.Open();
+            if (_connection.State == System.Data.ConnectionState.Open)
+            {
+                MySqlCommand command = new MySqlCommand($"INSERT INTO users (username, password, todo_json)" +
+                    $" VALUES(@Username, @Password, @Json)", _connection);
+                command.Parameters.AddWithValue("Username", username);
+                command.Parameters.AddWithValue("Password", password);
+                command.Parameters.AddWithValue("Json", JsonSerializer.Serialize(new List<ToDoItem>()));
+                command.ExecuteNonQuery();
+            }
+            _connection.Close();
+
+            return true;
         }
 
         public bool DeleteUser(string username, string password)

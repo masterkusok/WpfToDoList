@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
-    internal class User
+    public class User
     {
         private string _username;
         private string _password;

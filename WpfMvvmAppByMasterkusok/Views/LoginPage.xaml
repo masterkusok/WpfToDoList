@@ -14,6 +14,17 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="7*"/>
+            </Grid.RowDefinitions>
+            <Button Visibility="{Binding RegistrationMode}" Command="{Binding SwitchRegisterMode}"
+                    Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                    Content="Go back" FontSize="20"/>
+        </Grid>
+        
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="5*"/>
@@ -49,16 +60,31 @@
                            FontSize="15"/>
                 </Grid>
             </Popup>
+
+            <Label Visibility="{Binding LoginMode}" Content="Login in ToDoList" HorizontalAlignment="Center" 
+                   Style="{DynamicResource LargeLabelStyle}"/>
+
+            <Label Visibility="{Binding RegistrationMode}" Content="Registration" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             
-            <Label x:Name="label" Content="Login in ToDoList" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
+            
             <TextBox Grid.Row="2" HorizontalContentAlignment="Left" Text="{Binding Username}" 
                      Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
             <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
+            
             <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
+            
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
                     FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
-                    IsEnabled="{Binding ControlsEnabled}"/>
+                    IsEnabled="{Binding ControlsEnabled}" Visibility="{Binding LoginMode}"/>
+
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Register" 
+                    FontSize="20" Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
+                    IsEnabled="{Binding ControlsEnabled}" Visibility="{Binding RegistrationMode}"/>
+
+            <Button Content="Don't have account? Register!" Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="7" Foreground="AliceBlue"
+                    Visibility="{Binding LoginMode}" Command="{Binding SwitchRegisterMode}"/>
         </Grid>
     </Grid>
 </Page>

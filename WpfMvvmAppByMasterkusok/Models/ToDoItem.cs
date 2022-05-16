@@ -2,7 +2,7 @@
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
-    internal class ToDoItem
+    public class ToDoItem
     {
         private bool _everydayTask;
         private string _text;
