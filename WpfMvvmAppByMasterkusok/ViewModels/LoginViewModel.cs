@@ -14,18 +14,28 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
     {
         private string _password;
         private string _username;
+
+        #region Visibilities and other view variables
         private bool _controlsEnabled = true;
-        private bool _popupOpened;
-        private bool _errorPopupOpened;
+        private bool _loadingPopupOpened;
+        private bool _loginErrorPopupOpened;
+        private bool _registerErrorPopupOpened;
         private bool _isRegistrationMode = false;
+        private bool _registerSuccessPopupOpened;
         private Visibility _registrationMode = Visibility.Hidden;
         private Visibility _loginMode = Visibility.Visible;
         public Visibility RegistrationMode { get => _registrationMode; set => _registrationMode = value; }
         public Visibility LoginMode { get => _loginMode; set => _loginMode = value; }
-        public string Username { get =>  _username; set => _username = value; }
+        
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
-        public bool PopupOpened { get => _popupOpened; set => _popupOpened = value; }
-        public bool ErrorPopupOpened { get => _errorPopupOpened; set => _errorPopupOpened = value;}
+        public bool LoadingPopupOpened { get => _loadingPopupOpened; set => _loadingPopupOpened = value; }
+        public bool LoginErrorPopupOpened { get => _loginErrorPopupOpened; set => _loginErrorPopupOpened = value;}
+        public bool RegisterErrorPopupOpened { get => _registerErrorPopupOpened; set => _registerErrorPopupOpened = value; }
+        public bool RegisterSuccessPopupOpened { get => _registerSuccessPopupOpened;
+            set => _registerSuccessPopupOpened = value; }
+        #endregion
+
+        public string Username { get => _username; set => _username = value; }
 
         private IDbService _dbService;
         public ICommand LoginCommand { get; set; }
@@ -92,16 +102,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private void BlockAllControls()
         {
             _controlsEnabled = false;
-            _popupOpened = true;
+            _loadingPopupOpened = true;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            NotifyOnPropertyChanged(nameof(PopupOpened));
+            NotifyOnPropertyChanged(nameof(LoadingPopupOpened));
         }
         private void UnlockAllControls()
         {
             _controlsEnabled = true;
-            _popupOpened = false;
+            _loadingPopupOpened = false;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            NotifyOnPropertyChanged(nameof(PopupOpened));
+            NotifyOnPropertyChanged(nameof(LoadingPopupOpened));
         }
         private User GetUserFromDb()
         {
@@ -110,7 +120,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void ExecuteNavigation(User user)
         {
-            if(user != null)
+            if(user is not NotExistingUser)
             {
                 MoveToPage(new MainPage(user));
                 return;
@@ -120,11 +130,11 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void DisplayErrorPopup()
         {
-            _errorPopupOpened = true;
-            NotifyOnPropertyChanged(nameof(ErrorPopupOpened));
+            _loginErrorPopupOpened = true;
+            NotifyOnPropertyChanged(nameof(LoginErrorPopupOpened));
             await Task.Delay(6500);
-            _errorPopupOpened = false;
-            NotifyOnPropertyChanged(nameof(ErrorPopupOpened));
+            _loginErrorPopupOpened = false;
+            NotifyOnPropertyChanged(nameof(LoginErrorPopupOpened));
         }
 
         private async void TryToRegister(object parameter)
@@ -132,18 +142,54 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             GetPasswordFromPasswordBox((PasswordBox)parameter);
             if (_username != null && _password != null)
             {
+                bool completedSuccessfully = false;
                 BlockAllControls();
                 await Task.Run(async () =>
                 {
                     await Task.Delay(1500);
                     if(_dbService.AddUser(_username, _password))
                     {
-                        return;
-                    };
+                        completedSuccessfully = true;
+                    }
                 });
                 UnlockAllControls();
+                if (completedSuccessfully)
+                {
+                    ExecuteRegisterNavigation();
+                    return;
+                }
+                DisplayRegisterErrorPopup();
             }
-            //DisplayErrorPopup();
+        }
+
+        private void ExecuteRegisterNavigation()
+        {
+            DisplayRegisterSuccessPopupAndRedirect();
+        }
+
+        private async void DisplayRegisterSuccessPopupAndRedirect()
+        {
+            _registerSuccessPopupOpened = true;
+            NotifyOnPropertyChanged(nameof(RegisterSuccessPopupOpened));
+            await Task.Delay(5000);
+            _registerSuccessPopupOpened = false;
+            NotifyOnPropertyChanged(nameof(RegisterSuccessPopupOpened));
+            RedirectToLoginPage();
+        }
+
+        private void RedirectToLoginPage()
+        {
+            MoveToPage(new LoginPage(_navigationStore));
+        }
+
+        private async void DisplayRegisterErrorPopup()
+        {
+            // Maybe i will create PopupDisplayer class, to avoid this exactly similar functions
+            _registerErrorPopupOpened = true;
+            NotifyOnPropertyChanged(nameof(RegisterErrorPopupOpened));
+            await Task.Delay(6500);
+            _registerErrorPopupOpened = false;
+            NotifyOnPropertyChanged(nameof(RegisterErrorPopupOpened));
         }
     }
 }

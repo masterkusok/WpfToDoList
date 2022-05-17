@@ -32,7 +32,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         public bool AddUser(string username, string password)
         {
-            if(GetUser(username, password) is not NotExistingUser)
+            if(GetUser(username, password) is NotExistingUser)
             {
                 return MakeInsertRequestToSql(username, password);
             }
@@ -52,7 +52,6 @@ namespace WpfMvvmAppByMasterkusok.Models
                 command.ExecuteNonQuery();
             }
             _connection.Close();
-
             return true;
         }
 
@@ -64,32 +63,38 @@ namespace WpfMvvmAppByMasterkusok.Models
         
         public User GetUser(string username, string password)
         {
-            User user = null;
+            User user = new NotExistingUser("noname", "", new List<ToDoItem>());
             _connection.Open();
             if (_connection.State == System.Data.ConnectionState.Open)
             {
                 MySqlCommand command = new MySqlCommand($"SELECT * FROM users WHERE username = '{username}'" +
                     $"AND password = '{password}'", _connection);
-                MySqlDataReader reader = command.ExecuteReader();
-                if(reader.Read())
-                {
-                    string json_string = reader["todo_json"].ToString();
-                    List<ToDoItem> toDoItems = null;
-                    try
-                    {
-                        toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(json_string);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
-                    }
-                    user = new User(username, password, toDoItems);
-                }
+                
+                user = TryToReadUsersData(command);
             }
             _connection.Close();
             return user;
         }
 
+        private User TryToReadUsersData(MySqlCommand command)
+        {
+            MySqlDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                string json_string = reader["todo_json"].ToString();
+                List<ToDoItem> toDoItems = new List<ToDoItem>();
+                try
+                {
+                    toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(json_string);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+                return new User(reader["username"].ToString(), reader["password"].ToString(), toDoItems);
+            }
+            return new NotExistingUser("noname", "", new List<ToDoItem>());
+        }
         public bool UpdateUser(User user)
         {
             throw new NotImplementedException();

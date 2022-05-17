@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
-    internal class NotExistingUser : User
+    class NotExistingUser : User
     {
         public NotExistingUser(string username, string password, List<ToDoItem> toDoItems) : base(username, password, toDoItems)
         {

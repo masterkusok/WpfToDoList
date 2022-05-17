@@ -38,7 +38,7 @@
             </Grid.RowDefinitions>
             
             <!-- This popup is being opened while model is performing request to database -->
-            <Popup Placement="Center" IsOpen="{Binding PopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+            <Popup Placement="Center" IsOpen="{Binding LoadingPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#1f1f1f">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
@@ -53,14 +53,33 @@
             <!-- This popup is being opened if db can't find such user-->
             <Popup Placement="Right" PlacementTarget="{Binding ElementName=label}"
                    Width="210" Height="110"
-                   IsOpen="{Binding ErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                   IsOpen="{Binding LoginErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#bf2a2a">
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="Invalid password or username"
                            FontSize="15"/>
                 </Grid>
             </Popup>
-
+            <!-- This popup appears if user is trying to register with already existing username-->
+            <Popup Placement="Right" PlacementTarget="{Binding ElementName=label}"
+                   Width="210" Height="110"
+                   IsOpen="{Binding RegisterErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                <Grid Background="#bf2a2a">
+                    <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
+                               VerticalContentAlignment="Center" Content="This username is already taken"
+                           FontSize="15"/>
+                </Grid>
+            </Popup>
+            <!-- This popup appears if registration is done successfully-->
+            <Popup Placement="Center" PlacementTarget="{Binding ElementName=label}"
+                   Width="370" Height="200"
+                   IsOpen="{Binding RegisterSuccessPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                <Grid Background="#20a849">
+                    <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
+                               VerticalContentAlignment="Center" Content="Registration was done successfully!&#10;After 5 seconds you will be redirected to login page!"
+                           FontSize="15"/>
+                </Grid>
+            </Popup>
             <Label Visibility="{Binding LoginMode}" Content="Login in ToDoList" HorizontalAlignment="Center" 
                    Style="{DynamicResource LargeLabelStyle}"/>
 
