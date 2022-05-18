@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
 namespace WpfMvvmAppByMasterkusok.Models
@@ -63,7 +63,7 @@ namespace WpfMvvmAppByMasterkusok.Models
         
         public User GetUser(string username, string password)
         {
-            User user = new NotExistingUser("noname", "", new List<ToDoItem>());
+            User user = new NotExistingUser("noname", "", new ObservableCollection<ToDoItem>());
             _connection.Open();
             if (_connection.State == System.Data.ConnectionState.Open)
             {
@@ -82,10 +82,10 @@ namespace WpfMvvmAppByMasterkusok.Models
             if (reader.Read())
             {
                 string json_string = reader["todo_json"].ToString();
-                List<ToDoItem> toDoItems = new List<ToDoItem>();
+                ObservableCollection<ToDoItem> toDoItems = new ObservableCollection<ToDoItem>();
                 try
                 {
-                    toDoItems = JsonSerializer.Deserialize<List<ToDoItem>>(json_string);
+                    toDoItems = JsonSerializer.Deserialize<ObservableCollection<ToDoItem>>(json_string);
                 }
                 catch (Exception ex)
                 {
@@ -93,7 +93,7 @@ namespace WpfMvvmAppByMasterkusok.Models
                 }
                 return new User(reader["username"].ToString(), reader["password"].ToString(), toDoItems);
             }
-            return new NotExistingUser("noname", "", new List<ToDoItem>());
+            return new NotExistingUser("noname", "", new ObservableCollection<ToDoItem>());
         }
         public bool UpdateUser(User user)
         {

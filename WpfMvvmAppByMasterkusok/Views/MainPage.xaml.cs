@@ -1,5 +1,7 @@
 ﻿using System.Windows.Controls;
 using WpfMvvmAppByMasterkusok.Models;
+using WpfMvvmAppByMasterkusok.Stores;
+using WpfMvvmAppByMasterkusok.ViewModels;
 
 namespace WpfMvvmAppByMasterkusok.Views
 {
@@ -8,9 +10,10 @@ namespace WpfMvvmAppByMasterkusok.Views
     /// </summary>
     public partial class MainPage : Page
     {
-        public MainPage(User user)
+        public MainPage(NavigationStore store, User user)
         {
             InitializeComponent();
+            this.DataContext = new MainPageViewModel(store, user);
         }
     }
 }

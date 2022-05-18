@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
@@ -10,19 +8,17 @@ namespace WpfMvvmAppByMasterkusok.Models
     {
         private string _username;
         private string _password;
-        protected List<ToDoItem> _toDoItems;
+        protected ObservableCollection<ToDoItem> _toDoItems;
         public string Username { get => _username; }
         public string Password { get => _password; }
-        public User(string username, string password, List<ToDoItem> toDoItems)
+        public ObservableCollection<ToDoItem> ToDoItems { get => _toDoItems; set => _toDoItems = value; }
+        public User(string username, string password, ObservableCollection<ToDoItem> toDoItems)
         {
             _username = username;
             _password = password;
             _toDoItems = toDoItems;
         }
-        public List<ToDoItem> GetToDoItems()
-        {
-            return _toDoItems;
-        }
+        
         public void AddToDoItem(ToDoItem item)
         {
             _toDoItems.Add(item);

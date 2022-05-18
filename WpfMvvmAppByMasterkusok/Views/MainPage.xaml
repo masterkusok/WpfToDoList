@@ -9,6 +9,28 @@
       Title="MainPage">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <ListView Grid.Column="1" ItemsSource="{Binding ToDoList}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Path=Text}"/>
+                            <Button Content="Done" IsEnabled="{Binding Path=isChecked}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid> 
         <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
     </Grid>
 </Page>

@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
     class NotExistingUser : User
     {
-        public NotExistingUser(string username, string password, List<ToDoItem> toDoItems) : base(username, password, toDoItems)
+        public NotExistingUser(string username, string password, ObservableCollection<ToDoItem> toDoItems) : base(username, password, toDoItems)
         {
         }
     }

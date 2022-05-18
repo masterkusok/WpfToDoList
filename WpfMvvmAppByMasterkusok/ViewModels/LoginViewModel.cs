@@ -122,7 +122,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             if(user is not NotExistingUser)
             {
-                MoveToPage(new MainPage(user));
+                MoveToPage(new MainPage(_navigationStore, user));
                 return;
             }
             DisplayErrorPopup();
