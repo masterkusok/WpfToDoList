@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
@@ -8,9 +9,18 @@ namespace WpfMvvmAppByMasterkusok.Models
         private string _text;
         private bool _isChecked;
         private DateTime _creationDate;
-        public bool EverydayTask { get=> _everydayTask; }
-        public bool IsChecked { get=> _isChecked; }
-        public string Text { get => _text; }
+        public DateTime CreationDate { get => _creationDate; set => _creationDate = value; }
+        public bool EverydayTask { get => _everydayTask; set => _everydayTask = value; }
+        public bool IsChecked { get => _isChecked; set => _isChecked = value; }
+        public string Text { get => _text; set => _text = value; }
+        [JsonConstructor]
+        public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate)
+        {
+            Text = text ?? throw new ArgumentNullException(nameof(text));
+            EverydayTask = everydayTask;
+            IsChecked = isChecked;
+            CreationDate = creationDate;
+        }
         public ToDoItem(string text, bool everydayTask)
         {
             _text = text;
@@ -18,13 +28,13 @@ namespace WpfMvvmAppByMasterkusok.Models
             _creationDate = DateTime.Today;
             _isChecked = false;
         }
-        public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate)
+        /*public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate)
         {
             _text = text;
             _everydayTask = everydayTask;
             _isChecked = isChecked;
             _creationDate = creationDate;
-        }
+        }*/
         public void Check()
         {
             _isChecked = true;

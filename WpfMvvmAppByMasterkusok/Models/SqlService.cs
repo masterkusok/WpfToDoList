@@ -95,9 +95,30 @@ namespace WpfMvvmAppByMasterkusok.Models
             }
             return new NotExistingUser("noname", "", new ObservableCollection<ToDoItem>());
         }
-        public bool UpdateUser(User user)
+        public bool UpdateUser(User sourceUser, User newVersionOfUser)
         {
-            throw new NotImplementedException();
+            if(GetUser(sourceUser.Username, sourceUser.Password) is not NotExistingUser)
+            {
+                _connection.Open();
+                ExecuteUpdateCommand(sourceUser, newVersionOfUser);
+                _connection.Close();
+                return true;
+            } 
+            return false;
+        }
+
+        private void ExecuteUpdateCommand(User source, User newVersion)
+        {
+            MySqlCommand command = new MySqlCommand($"UPDATE users SET username=@Username, password=@Password, todo_json=@Json " +
+                $"WHERE username=@OldUsername AND password=@OldPassword"
+                , _connection);
+            command.Parameters.AddWithValue("Username", newVersion.Username);
+            command.Parameters.AddWithValue("Password", newVersion.Password);
+            command.Parameters.AddWithValue("Json", 
+                JsonSerializer.Serialize<ObservableCollection<ToDoItem>>(newVersion.ToDoItems));
+            command.Parameters.AddWithValue("OldUsername", source.Username);
+            command.Parameters.AddWithValue("OldPassword", source.Password);
+            command.ExecuteNonQuery();
         }
     }
 }

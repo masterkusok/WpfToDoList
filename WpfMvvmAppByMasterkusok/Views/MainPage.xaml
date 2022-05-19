@@ -7,7 +7,14 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="MainPage">
-
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style TargetType="ListView" x:Key="MainListView">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -20,17 +27,27 @@
                 <ColumnDefinition Width="6*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListView Grid.Column="1" ItemsSource="{Binding ToDoList}">
+            <ListView Grid.Column="1" ItemsSource="{Binding ToDoList}" Style="{DynamicResource MainListView}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding Path=Text}"/>
                             <Button Content="Done" IsEnabled="{Binding Path=isChecked}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-        </Grid> 
-        <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" Foreground="White" 
+                    FontSize="40" Command="{Binding AddToDoItemCommand}"/>
+            <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
+        </Grid>
     </Grid>
 </Page>
