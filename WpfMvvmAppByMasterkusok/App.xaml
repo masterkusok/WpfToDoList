@@ -76,6 +76,11 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="FadingAndTransparentPopup" TargetType="Popup">
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="PopupAnimation" Value="Fade"/>
+        </Style>
+        
         <Style x:Key="LoginOrRegisterPopup" TargetType="Popup">
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="Width" Value="350"/>
@@ -104,6 +109,11 @@
                     </Trigger.EnterActions>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="TextBlockStyle">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="20"/>
         </Style>
     </Application.Resources>
 </Application>

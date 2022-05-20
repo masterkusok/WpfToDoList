@@ -28,13 +28,7 @@ namespace WpfMvvmAppByMasterkusok.Models
             _creationDate = DateTime.Today;
             _isChecked = false;
         }
-        /*public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate)
-        {
-            _text = text;
-            _everydayTask = everydayTask;
-            _isChecked = isChecked;
-            _creationDate = creationDate;
-        }*/
+        
         public void Check()
         {
             _isChecked = true;

@@ -13,8 +13,10 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
+            
         </ResourceDictionary>
     </Page.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -27,17 +29,42 @@
                 <ColumnDefinition Width="6*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <ListView Grid.Column="1" ItemsSource="{Binding ToDoList}" Style="{DynamicResource MainListView}">
+            <ListView Grid.Column="1"
+                      ItemsSource="{Binding ToDoList}" Style="{DynamicResource MainListView}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Text}"/>
-                            <Button Content="Done" IsEnabled="{Binding Path=isChecked}"/>
+                            <TextBox Style="{DynamicResource LoginTextBox}" IsReadOnly="True" Text="{Binding Path=Text}"
+                                       TextWrapping="Wrap"/>
+                            <Button Content="Done" IsEnabled="{Binding Path=isChecked}" 
+                                    Style="{DynamicResource ButtonWithoutHoverAndBg}" HorizontalAlignment="Right"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
+        <!-- Popup, which process adding ToDoItems to list -->
+        <Popup Placement="Center" IsOpen="{Binding AddItemPopupOpened}" Style="{DynamicResource FadingAndTransparentPopup}"
+               Width="500" Height="350">
+            <Grid Background="#1f1f1f">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="6*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                </Grid.RowDefinitions>
+                <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="X" HorizontalAlignment="Right"
+                        Command="{Binding CloseAddToDoItemPopupCommand}"/>
+                <TextBox Text="{Binding NewToDoItemText, Mode=TwoWay}" Grid.Row="1" Style="{DynamicResource LoginTextBox}" 
+                         FontSize="15" TextWrapping="Wrap"/>
+                <CheckBox Grid.Row="2" Content="Repeat every day?" HorizontalAlignment="Center" Foreground="White"
+                          IsChecked="{Binding IsNewToDoItemEverDay}"/>
+                
+                <Button Grid.Row="3" Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                        Command="{Binding CreateNewToDoItemCommand}"/>
+            </Grid>
+        </Popup>
+        
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
