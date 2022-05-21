@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-        
+
         <!-- All window style -->
         <Style TargetType="Window" x:Key="WindowStyle">
             <Setter Property="Background">
@@ -80,21 +80,21 @@
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="PopupAnimation" Value="Fade"/>
         </Style>
-        
+
         <Style x:Key="LoginOrRegisterPopup" TargetType="Popup">
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="Width" Value="350"/>
             <Setter Property="Height" Value="180"/>
             <Setter Property="PopupAnimation" Value="Fade"/>
         </Style>
-        
+
         <!-- Spinning loader animation -->
         <Style x:Key="SpinningImage" TargetType="Image">
             <Setter Property="RenderTransformOrigin" Value="0.5, 0.5"/>
             <Setter Property="Image.RenderTransform">
                 <Setter.Value>
                     <RotateTransform Angle="0"/>
-                </Setter.Value> 
+                </Setter.Value>
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="True">

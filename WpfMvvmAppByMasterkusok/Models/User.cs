@@ -21,11 +21,25 @@ namespace WpfMvvmAppByMasterkusok.Models
         
         public void AddToDoItem(ToDoItem item)
         {
+            item.Id = _toDoItems.Count + 1;
             _toDoItems.Add(item);
         }
         public void RemoveToDoItem(ToDoItem item)
         {
             _toDoItems.Remove(item);
+        }
+        public ToDoItem GetToDoItemById(int id)
+        {
+            ToDoItem foundItem = null;
+            foreach(ToDoItem item in _toDoItems)
+            {
+                if(item.Id == id)
+                {
+                    foundItem = item;
+                    break;
+                }
+            }
+            return foundItem;
         }
     }
 }

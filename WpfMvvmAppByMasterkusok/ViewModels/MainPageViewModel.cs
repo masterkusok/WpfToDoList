@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using WpfMvvmAppByMasterkusok.Commands;
 using WpfMvvmAppByMasterkusok.Models;
@@ -14,12 +16,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool _addItemPopupOpened;
         private bool _isNewToDoItemEverDay;
         private string _newToDoItemText;
+        private ToDoItem _showingToDoItem;
+        private bool _toDoItemPopupOpened;
         public bool IsNewToDoItemEverDay { get => _isNewToDoItemEverDay; set => _isNewToDoItemEverDay = value; }
         public string NewToDoItemText { get => _newToDoItemText; set => _newToDoItemText = value; }
         public ICommand AddToDoItemCommand { get; set; }
         public ICommand CloseAddToDoItemPopupCommand { get; set; }
         public ICommand CreateNewToDoItemCommand { get; set; }
+        public ICommand OpenToDoItemPageCommand { get; set; }
+        public ToDoItem ShowingToDoItem { get => _showingToDoItem; set => _showingToDoItem = value; }
         public bool AddItemPopupOpened { get => _addItemPopupOpened; set => _addItemPopupOpened = value; }
+        public bool ToDoItemPopupOpened { get => _toDoItemPopupOpened; set => _toDoItemPopupOpened = value; }
 
         public ObservableCollection<ToDoItem> ToDoList { 
             get=> _user.ToDoItems; 
@@ -38,11 +45,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 DisplayToDoItemCreatingPopup();
             });
-            CloseAddToDoItemPopupCommand = new RelayCommand(obj =>{
+            CloseAddToDoItemPopupCommand = new RelayCommand(obj =>
+            {
                 CloseAddToDoItemPopup();
             });
-            CreateNewToDoItemCommand = new RelayCommand(obj =>{
+            CreateNewToDoItemCommand = new RelayCommand(obj =>
+            {
                 CreateNewToDoItem();
+            });
+            OpenToDoItemPageCommand = new RelayCommand(obj =>
+            {
+                OpenToDoItemPage(obj);
             });
         }
         private void CloseAddToDoItemPopup()
@@ -62,7 +75,24 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 _user.AddToDoItem(new ToDoItem(NewToDoItemText, IsNewToDoItemEverDay));
                 NotifyOnPropertyChanged(nameof(ToDoList));
                 CloseAddToDoItemPopup();
+                UpdateListInDb();
             }
+        }
+
+        private async void UpdateListInDb()
+        {
+            await Task.Run(() =>
+            {
+                _dbService.UpdateUser(_user, _user);
+            });
+        }
+
+        private void OpenToDoItemPage(object obj)
+        {
+            _showingToDoItem = _user.GetToDoItemById((int)obj);
+            _toDoItemPopupOpened = true;
+            NotifyOnPropertyChanged(nameof(ToDoItemPopupOpened));
+            NotifyOnPropertyChanged(nameof(ShowingToDoItem));
         }
     }
 }
