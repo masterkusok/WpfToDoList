@@ -76,6 +76,42 @@
             </Style.Triggers>
         </Style>
 
+        <Style TargetType="Button" x:Key="ToDoItemActionButton">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush>#5065d9</SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="#5065d9"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="#4052b3"/>
+                    <Setter Property="Cursor">
+                        <Setter.Value>
+                            <Cursor >
+                                Hand
+                            </Cursor>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
         <Style x:Key="FadingAndTransparentPopup" TargetType="Popup">
             <Setter Property="AllowsTransparency" Value="True"/>
             <Setter Property="PopupAnimation" Value="Fade"/>
@@ -115,5 +151,8 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
+        <BooleanToVisibilityConverter x:Key="InvertableBooleanToVisConverter">
+            
+        </BooleanToVisibilityConverter>
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Data;
 using WpfMvvmAppByMasterkusok.Models;
 using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.ViewModels;
@@ -14,6 +15,7 @@ namespace WpfMvvmAppByMasterkusok.Views
         {
             InitializeComponent();
             this.DataContext = new MainPageViewModel(store, user);
+             
         }
     }
 }

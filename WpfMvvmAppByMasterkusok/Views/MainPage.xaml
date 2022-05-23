@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
+      xmlns:conv="clr-namespace:WpfMvvmAppByMasterkusok.Models"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       x:Name="mainPage"
@@ -14,6 +15,7 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
+            
         </ResourceDictionary>
     </Page.Resources>
     
@@ -38,7 +40,7 @@
                                      Text="{Binding Path=Text}" HorizontalAlignment="Left"/>
                             <Button Content="Go To" CommandParameter="{Binding Path=Id}" 
                                     Command="{Binding DataContext.OpenToDoItemPageCommand, ElementName=mainPage}" 
-                                    Style="{DynamicResource ButtonWithoutHoverAndBg}" Background="Blue" 
+                                    Style="{DynamicResource ButtonWithoutHoverAndBg}"
                                     HorizontalAlignment="Right"/>
                         </StackPanel>
                     </DataTemplate>
@@ -61,7 +63,7 @@
                          FontSize="15" TextWrapping="Wrap"/>
                 <CheckBox Grid.Row="2" Content="Repeat every day?" HorizontalAlignment="Center" Foreground="White"
                           IsChecked="{Binding IsNewToDoItemEverDay}"/>
-                <Button Grid.Row="3" Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                <Button Grid.Row="3" Content="Apply" Style="{DynamicResource ToDoItemActionButton}"
                         Command="{Binding CreateNewToDoItemCommand}"/>
             </Grid>
         </Popup>
@@ -75,20 +77,21 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
-                <TextBox Text="{Binding ShowingToDoItem.CreationDate}" IsReadOnly="True"
+                <TextBox Text="{Binding ShowingToDoItem.FormatedCreationDate, Mode=OneWay}" IsReadOnly="True"
                          Style="{DynamicResource LoginTextBox}"/>
-                <Button/>
+                <Button Content="X" HorizontalAlignment="Right" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
                 <TextBox Grid.Row="1" IsReadOnly="True" Style="{DynamicResource LoginTextBox}"
                          TextWrapping="Wrap" Text="{Binding ShowingToDoItem.Text}"/>
                 <Grid  Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="DONE" Grid.Column="0" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
-                    <Button Content="UNDONE" Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
-                    <Button Content="DELETE" Grid.Column="2" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
+                    <Button Content="DONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
+                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+                    <Button Content="UNDONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
+                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"/>
+                    <Button Content="DELETE" Grid.Column="1" Style="{DynamicResource ToDoItemActionButton}"/>
                 </Grid>
             </Grid>
         </Popup>

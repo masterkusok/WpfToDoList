@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
+      xmlns:conv="clr-namespace:WpfMvvmAppByMasterkusok.Models"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Name="loginPage"
@@ -20,7 +21,8 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
-            <Button Visibility="{Binding RegistrationMode}" Command="{Binding SwitchRegisterMode}"
+            <Button Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"
+                    Command="{Binding SwitchRegisterMode}"
                     Style="{DynamicResource ButtonWithoutHoverAndBg}"
                     Content="Go back" FontSize="20"/>
         </Grid>
@@ -80,10 +82,12 @@
                            FontSize="15"/>
                 </Grid>
             </Popup>
-            <Label Visibility="{Binding LoginMode}" Content="Login in ToDoList" HorizontalAlignment="Center" 
+            <Label Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}" 
+                   Content="Login in ToDoList" HorizontalAlignment="Center" 
                    Style="{DynamicResource LargeLabelStyle}"/>
 
-            <Label Visibility="{Binding RegistrationMode}" Content="Registration" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
+            <Label Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}" 
+                   Content="Registration" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             
             <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
             
@@ -95,15 +99,18 @@
             
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
                     FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
-                    IsEnabled="{Binding ControlsEnabled}" Visibility="{Binding LoginMode}"/>
+                    IsEnabled="{Binding ControlsEnabled}" 
+                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
 
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Register" 
                     FontSize="20" Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
-                    IsEnabled="{Binding ControlsEnabled}" Visibility="{Binding RegistrationMode}"/>
+                    IsEnabled="{Binding ControlsEnabled}"
+                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"/>
 
             <Button Content="Don't have account? Register!" Style="{DynamicResource ButtonWithoutHoverAndBg}"
                     VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="7" Foreground="AliceBlue"
-                    Visibility="{Binding LoginMode}" Command="{Binding SwitchRegisterMode}"/>
+                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}" 
+                    Command="{Binding SwitchRegisterMode}"/>
         </Grid>
     </Grid>
 </Page>

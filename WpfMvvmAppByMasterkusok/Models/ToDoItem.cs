@@ -15,6 +15,11 @@ namespace WpfMvvmAppByMasterkusok.Models
         public bool IsChecked { get => _isChecked; set => _isChecked = value; }
         public string Text { get => _text; set => _text = value; }
         public int Id { get => _id; set => _id = value; }
+        public string FormatedCreationDate
+        {
+            get => $"Created on {_creationDate.Date.ToShortDateString()}";
+        }
+
         [JsonConstructor]
         public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate, int id)
         {

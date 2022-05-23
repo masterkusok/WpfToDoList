@@ -22,10 +22,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool _registerErrorPopupOpened;
         private bool _isRegistrationMode = false;
         private bool _registerSuccessPopupOpened;
-        private Visibility _registrationMode = Visibility.Hidden;
-        private Visibility _loginMode = Visibility.Visible;
-        public Visibility RegistrationMode { get => _registrationMode; set => _registrationMode = value; }
-        public Visibility LoginMode { get => _loginMode; set => _loginMode = value; }
+
+        public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
         
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
         public bool LoadingPopupOpened { get => _loadingPopupOpened; set => _loadingPopupOpened = value; }
@@ -63,18 +61,13 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             if (!_isRegistrationMode)
             {
-                _registrationMode = Visibility.Visible;
-                _loginMode = Visibility.Hidden;
                 _isRegistrationMode = true;
             }
             else
             {
-                _registrationMode = Visibility.Hidden;
-                _loginMode = Visibility.Visible;
                 _isRegistrationMode = false;
             }
             NotifyOnPropertyChanged(nameof(RegistrationMode));
-            NotifyOnPropertyChanged(nameof(LoginMode));
         }
 
         private async void LoginBtnClicked(object parameter)
