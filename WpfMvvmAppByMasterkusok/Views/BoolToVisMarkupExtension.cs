@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Markup;
 
-namespace WpfMvvmAppByMasterkusok.Models
+namespace WpfMvvmAppByMasterkusok.Views
 {
     public class BoolToVisMarkupExtension : MarkupExtension
     {

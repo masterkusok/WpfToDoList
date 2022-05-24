@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
-      xmlns:conv="clr-namespace:WpfMvvmAppByMasterkusok.Models"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       x:Name="mainPage"
@@ -48,7 +47,7 @@
             </ListView>
         </Grid>
         <!-- Popup, which process adding ToDoItems to list -->
-        <Popup Placement="Center" IsOpen="{Binding AddItemPopupOpened}" Style="{DynamicResource FadingAndTransparentPopup}"
+        <Popup Placement="Center" IsOpen="{Binding AddToDoItemPopup.IsOpened}" Style="{DynamicResource FadingAndTransparentPopup}"
                Width="500" Height="350">
             <Grid Background="#1f1f1f">
                 <Grid.RowDefinitions>
@@ -69,7 +68,7 @@
         </Popup>
         <!-- Popup, which process every action with already existing ToDoItem-->
         <Popup Style="{DynamicResource FadingAndTransparentPopup}" Placement="Center"
-               Width="500" Height="320" IsOpen="{Binding ToDoItemPopupOpened}">
+               Width="500" Height="320" IsOpen="{Binding ToDoItemPopup.IsOpened}">
             <Grid Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -88,9 +87,11 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Button Content="DONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
-                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
+                        ConverterParameter=Inverted}"/>
                     <Button Content="UNDONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
-                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"/>
+                            Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
+                        ConverterParameter=Normal}"/>
                     <Button Content="DELETE" Grid.Column="1" Style="{DynamicResource ToDoItemActionButton}"/>
                 </Grid>
             </Grid>
@@ -104,7 +105,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" Foreground="White" 
-                    FontSize="40" Command="{Binding AddToDoItemCommand}"/>
+                    FontSize="40" Command="{Binding OpenAddToDoItemPopupCommand}"/>
             <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
         </Grid>
     </Grid>

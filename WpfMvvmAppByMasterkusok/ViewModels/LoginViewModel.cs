@@ -5,9 +5,6 @@ using WpfMvvmAppByMasterkusok.Views;
 using WpfMvvmAppByMasterkusok.Models;
 using System.Windows.Controls;
 using System.Threading.Tasks;
-using System.Windows;
-using System;
-
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class LoginViewModel : BaseViewModel
@@ -15,23 +12,23 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private string _password;
         private string _username;
 
-        #region Visibilities and other view variables
         private bool _controlsEnabled = true;
-        private bool _loadingPopupOpened;
-        private bool _loginErrorPopupOpened;
-        private bool _registerErrorPopupOpened;
         private bool _isRegistrationMode = false;
-        private bool _registerSuccessPopupOpened;
+
+        private PopupRepresenter _loginErrorPopup;
+        private PopupRepresenter _loadingPopup;
+        private PopupRepresenter _registerPopup;
+        private PopupRepresenter _registerSuccessPopup;
+        private PopupRepresenter _registerErrorPopup;
 
         public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
         
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
-        public bool LoadingPopupOpened { get => _loadingPopupOpened; set => _loadingPopupOpened = value; }
-        public bool LoginErrorPopupOpened { get => _loginErrorPopupOpened; set => _loginErrorPopupOpened = value;}
-        public bool RegisterErrorPopupOpened { get => _registerErrorPopupOpened; set => _registerErrorPopupOpened = value; }
-        public bool RegisterSuccessPopupOpened { get => _registerSuccessPopupOpened;
-            set => _registerSuccessPopupOpened = value; }
-        #endregion
+        public PopupRepresenter LoadingPopup { get => _loadingPopup; set => _loadingPopup = value; }
+        public PopupRepresenter RegisterPopup { get => _registerPopup; set => _registerPopup = value; }
+        public PopupRepresenter RegisterSuccessPopup { get => _registerSuccessPopup; set => _registerSuccessPopup = value; }
+        public PopupRepresenter RegisterErrorPopup { get => _registerErrorPopup; set => _registerErrorPopup = value; }
+        public PopupRepresenter LoginErrorPopup { get => _loginErrorPopup; set => _loginErrorPopup = value;}
 
         public string Username { get => _username; set => _username = value; }
 
@@ -39,8 +36,15 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         public ICommand LoginCommand { get; set; }
         public ICommand RegisterCommand { get; set; }
         public ICommand SwitchRegisterMode { get; set; }
+
         public LoginViewModel(NavigationStore navigationStore)
         {
+            _loadingPopup = new PopupRepresenter(nameof(LoadingPopup), this);
+            _registerSuccessPopup = new PopupRepresenter(nameof(RegisterSuccessPopup), this);
+            _registerErrorPopup = new PopupRepresenter(nameof(RegisterErrorPopup), this);
+            _registerPopup = new PopupRepresenter(nameof(RegisterPopup), this);
+            _loginErrorPopup = new PopupRepresenter(nameof(LoginErrorPopup), this);
+
             _navigationStore = navigationStore;
             _dbService = new SqlService();
             LoginCommand = new RelayCommand(obj =>
@@ -88,24 +92,26 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             }
             DisplayErrorPopup();
         }
+
         private void GetPasswordFromPasswordBox(PasswordBox box)
         {
             _password = box.Password;
         }
+
         private void BlockAllControls()
         {
             _controlsEnabled = false;
-            _loadingPopupOpened = true;
+            _loadingPopup.Open();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            NotifyOnPropertyChanged(nameof(LoadingPopupOpened));
         }
+
         private void UnlockAllControls()
         {
             _controlsEnabled = true;
-            _loadingPopupOpened = false;
+            _loadingPopup.Close();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            NotifyOnPropertyChanged(nameof(LoadingPopupOpened));
         }
+
         private User GetUserFromDb()
         {
             return _dbService.GetUser(_username, _password);
@@ -123,11 +129,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void DisplayErrorPopup()
         {
-            _loginErrorPopupOpened = true;
-            NotifyOnPropertyChanged(nameof(LoginErrorPopupOpened));
+            _loginErrorPopup.Open();
             await Task.Delay(6500);
-            _loginErrorPopupOpened = false;
-            NotifyOnPropertyChanged(nameof(LoginErrorPopupOpened));
+            _loginErrorPopup.Close();
         }
 
         private async void TryToRegister(object parameter)
@@ -162,11 +166,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void DisplayRegisterSuccessPopupAndRedirect()
         {
-            _registerSuccessPopupOpened = true;
-            NotifyOnPropertyChanged(nameof(RegisterSuccessPopupOpened));
+            _registerSuccessPopup.Open();
             await Task.Delay(5000);
-            _registerSuccessPopupOpened = false;
-            NotifyOnPropertyChanged(nameof(RegisterSuccessPopupOpened));
+            _registerSuccessPopup.Close();
             RedirectToLoginPage();
         }
 
@@ -178,11 +180,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private async void DisplayRegisterErrorPopup()
         {
             // Maybe i will create PopupDisplayer class, to avoid this exactly similar functions
-            _registerErrorPopupOpened = true;
-            NotifyOnPropertyChanged(nameof(RegisterErrorPopupOpened));
+            _registerErrorPopup.Open();
             await Task.Delay(6500);
-            _registerErrorPopupOpened = false;
-            NotifyOnPropertyChanged(nameof(RegisterErrorPopupOpened));
+            _registerErrorPopup.Close();
         }
     }
 }

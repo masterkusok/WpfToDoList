@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
-      xmlns:conv="clr-namespace:WpfMvvmAppByMasterkusok.Models"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Name="loginPage"
@@ -21,7 +20,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
-            <Button Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"
+            <Button Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"
                     Command="{Binding SwitchRegisterMode}"
                     Style="{DynamicResource ButtonWithoutHoverAndBg}"
                     Content="Go back" FontSize="20"/>
@@ -40,7 +39,7 @@
             </Grid.RowDefinitions>
             
             <!-- This popup is being opened while model is performing request to database -->
-            <Popup Placement="Center" IsOpen="{Binding LoadingPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+            <Popup Placement="Center" IsOpen="{Binding LoadingPopup.IsOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#1f1f1f">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
@@ -53,9 +52,9 @@
                 </Grid>
             </Popup>
             <!-- This popup is being opened if db can't find such user-->
-            <Popup Placement="Right" PlacementTarget="{Binding ElementName=label}"
+            <Popup Placement="Right"
                    Width="210" Height="110"
-                   IsOpen="{Binding LoginErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                   IsOpen="{Binding LoginErrorPopup.IsOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#bf2a2a">
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="Invalid password or username"
@@ -63,9 +62,9 @@
                 </Grid>
             </Popup>
             <!-- This popup appears if user is trying to register with already existing username-->
-            <Popup Placement="Right" PlacementTarget="{Binding ElementName=label}"
+            <Popup Placement="Right"
                    Width="210" Height="110"
-                   IsOpen="{Binding RegisterErrorPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                   IsOpen="{Binding RegisterErrorPopup.IsOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#bf2a2a">
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="This username is already taken"
@@ -73,20 +72,19 @@
                 </Grid>
             </Popup>
             <!-- This popup appears if registration is done successfully-->
-            <Popup Placement="Center" PlacementTarget="{Binding ElementName=label}"
+            <Popup Placement="Center" 
                    Width="370" Height="200"
-                   IsOpen="{Binding RegisterSuccessPopupOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
+                   IsOpen="{Binding RegisterSuccessPopup.IsOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
                 <Grid Background="#20a849">
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="Registration was done successfully!&#10;After 5 seconds you will be redirected to login page!"
                            FontSize="15"/>
                 </Grid>
             </Popup>
-            <Label Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}" 
+            <Label Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}" 
                    Content="Login in ToDoList" HorizontalAlignment="Center" 
                    Style="{DynamicResource LargeLabelStyle}"/>
-
-            <Label Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}" 
+            <Label Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}" 
                    Content="Registration" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
             
             <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
@@ -100,16 +98,16 @@
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
                     FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}" 
-                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
 
             <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Register" 
                     FontSize="20" Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}"
-                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Normal}"/>
-
+                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"/>
+            
             <Button Content="Don't have account? Register!" Style="{DynamicResource ButtonWithoutHoverAndBg}"
                     VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="7" Foreground="AliceBlue"
-                    Visibility="{Binding RegistrationMode, Converter={conv:BoolToVisMarkup}, ConverterParameter=Inverted}" 
+                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}" 
                     Command="{Binding SwitchRegisterMode}"/>
         </Grid>
     </Grid>
