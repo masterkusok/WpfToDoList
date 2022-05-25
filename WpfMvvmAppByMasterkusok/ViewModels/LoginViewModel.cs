@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
 using WpfMvvmAppByMasterkusok.Commands;
 using WpfMvvmAppByMasterkusok.Stores;
-using WpfMvvmAppByMasterkusok.Views;
 using WpfMvvmAppByMasterkusok.Models;
 using System.Windows.Controls;
 using System.Threading.Tasks;
@@ -121,7 +120,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             if(user is not NotExistingUser)
             {
-                MoveToPage(new MainPage(_navigationStore, user));
+                ChangeCurrentVM(new MainPageViewModel(_navigationStore, user));
                 return;
             }
             DisplayErrorPopup();
@@ -174,7 +173,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void RedirectToLoginPage()
         {
-            MoveToPage(new LoginPage(_navigationStore));
+            ChangeCurrentVM(new LoginViewModel(_navigationStore));
         }
 
         private async void DisplayRegisterErrorPopup()

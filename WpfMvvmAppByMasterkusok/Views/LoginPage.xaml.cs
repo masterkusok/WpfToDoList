@@ -16,10 +16,10 @@ namespace WpfMvvmAppByMasterkusok.Views
     /// </summary>
     public partial class LoginPage : Page
     {
-        public LoginPage(NavigationStore navigationStore)
+        public LoginPage(BaseViewModel vm)
         {
             InitializeComponent();
-            this.DataContext = new LoginViewModel(navigationStore);
+            this.DataContext = vm;
         }
     }
 }

@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Windows.Controls;
 using WpfMvvmAppByMasterkusok.Views;
+using WpfMvvmAppByMasterkusok.ViewModels;
 
 namespace WpfMvvmAppByMasterkusok.Stores
 {
     public class NavigationStore
     {
-        private Page _currentPage;
-        public Page CurrentPage
+        private BaseViewModel _currentVM;
+        public BaseViewModel CurrentVM
         {
-            get { return _currentPage; }
+            get { return _currentVM; }
             set { 
-                _currentPage = value;
+                _currentVM = value;
                 OnCurrentPageChanged();
             }
         }
@@ -22,7 +23,7 @@ namespace WpfMvvmAppByMasterkusok.Stores
         public event Action CurrentPageChanged;
         public NavigationStore()
         {
-            _currentPage = new LoginPage(this);
+            _currentVM = new LoginViewModel(this);
         }
     }
 }

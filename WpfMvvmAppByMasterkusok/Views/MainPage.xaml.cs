@@ -11,10 +11,10 @@ namespace WpfMvvmAppByMasterkusok.Views
     /// </summary>
     public partial class MainPage : Page
     {
-        public MainPage(NavigationStore store, User user)
+        public MainPage(BaseViewModel vm)
         {
             InitializeComponent();
-            this.DataContext = new MainPageViewModel(store, user);
+            this.DataContext = vm;
              
         }
     }

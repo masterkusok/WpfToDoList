@@ -12,26 +12,26 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             get;
         }
-        private Page _currentPage;
+        private BaseViewModel _currentVM;
         private NavigationStore _navigationStore;
-        public Page CurrentPage
+        public BaseViewModel CurrentVM
         {
-            get { return _currentPage; }
-            set { _currentPage = value; }
+            get { return _currentVM; }
+            set { _currentVM = value; }
         }
         public MainWindowViewModel(NavigationStore navigationStore)
         {
             _navigationStore = navigationStore;
-            CurrentPage = _navigationStore.CurrentPage;
-            NotifyOnPropertyChanged(nameof(CurrentPage));
+            _currentVM = _navigationStore.CurrentVM;
+            NotifyOnPropertyChanged(nameof(CurrentVM));
             CloseWindowCommand = new RelayCommand(obj =>
             {
                 Application.Current.MainWindow.Close();
             });
             _navigationStore.CurrentPageChanged += () =>
             {
-                CurrentPage = _navigationStore.CurrentPage;
-                NotifyOnPropertyChanged(nameof(CurrentPage));
+                CurrentVM = _navigationStore.CurrentVM;
+                NotifyOnPropertyChanged(nameof(CurrentVM));
             };
         }
 

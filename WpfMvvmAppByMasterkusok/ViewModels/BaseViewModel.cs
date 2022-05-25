@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using WpfMvvmAppByMasterkusok.Stores;
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
-    internal class BaseViewModel : INotifyPropertyChanged
+    public class BaseViewModel : INotifyPropertyChanged
     {
         protected NavigationStore _navigationStore;
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -11,12 +11,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        protected void MoveToPage(Page page)
+        protected void ChangeCurrentVM(BaseViewModel vm)
         {
             if (_navigationStore != null)
             {
-                _navigationStore.CurrentPage = page;
+                _navigationStore.CurrentVM = vm;
             }
+        }
+        public NavigationStore GetNavigationStore()
+        {
+            return _navigationStore;
         }
     }
 }

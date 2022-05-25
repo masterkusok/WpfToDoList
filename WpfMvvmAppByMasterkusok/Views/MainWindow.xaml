@@ -14,6 +14,6 @@
         </Grid.RowDefinitions>
         <Button Command="{Binding CloseWindowCommand}" Grid.Row="0" Content="X" HorizontalAlignment="Right"
                 Margin="0, 0, 10, 0"  VerticalAlignment="Top" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
-        <Frame Grid.Row="1" Content="{Binding CurrentPage}" NavigationUIVisibility="Hidden"/>
+        <Frame Grid.Row="1" Content="{Binding CurrentVM, Converter={local:ViewModelToView}}" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>
