@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Windows.Input;
+using WpfMvvmAppByMasterkusok.Commands;
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class PopupRepresenter
@@ -11,13 +7,26 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private BaseViewModel _invokingVm;
         private bool _isOpened;
         private string _name;
+
         public bool IsOpened { get => _isOpened; set => _isOpened = value; }
+        public ICommand OpenCommand { get; set; }
+        public ICommand CloseCommand { get; set; }
 
         public PopupRepresenter(string popupName, BaseViewModel invokingVm)
         {
             _isOpened = false;
             _invokingVm = invokingVm;
             _name = popupName;
+
+            OpenCommand = new RelayCommand(obj =>
+            {
+                Open();
+            });
+
+            CloseCommand = new RelayCommand(obj =>
+            {
+                Close();
+            });
         }
 
         public void Open()

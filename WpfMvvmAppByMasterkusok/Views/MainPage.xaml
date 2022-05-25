@@ -38,7 +38,7 @@
                             <TextBlock  TextTrimming="WordEllipsis" MaxWidth="200" Style="{DynamicResource TextBlockStyle}"
                                      Text="{Binding Path=Text}" HorizontalAlignment="Left"/>
                             <Button Content="Go To" CommandParameter="{Binding Path=Id}" 
-                                    Command="{Binding DataContext.OpenToDoItemPageCommand, ElementName=mainPage}" 
+                                    Command="{Binding DataContext.ToDoItemPopup.OpenCommand, ElementName=mainPage}" 
                                     Style="{DynamicResource ButtonWithoutHoverAndBg}"
                                     HorizontalAlignment="Right"/>
                         </StackPanel>
@@ -57,7 +57,7 @@
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
                 <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="X" HorizontalAlignment="Right"
-                        Command="{Binding CloseAddToDoItemPopupCommand}"/>
+                        Command="{Binding AddToDoItemPopup.CloseCommand}"/>
                 <TextBox Text="{Binding NewToDoItemText, Mode=TwoWay}" Grid.Row="1" Style="{DynamicResource LoginTextBox}" 
                          FontSize="15" TextWrapping="Wrap"/>
                 <CheckBox Grid.Row="2" Content="Repeat every day?" HorizontalAlignment="Center" Foreground="White"
@@ -78,7 +78,8 @@
                 </Grid.RowDefinitions>
                 <TextBox Text="{Binding ShowingToDoItem.FormatedCreationDate, Mode=OneWay}" IsReadOnly="True"
                          Style="{DynamicResource LoginTextBox}"/>
-                <Button Content="X" HorizontalAlignment="Right" Style="{DynamicResource ButtonWithoutHoverAndBg}"/>
+                <Button Content="X" HorizontalAlignment="Right" Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                        Command="{Binding ToDoItemPopup.CloseCommand}"/>
                 <TextBox Grid.Row="1" IsReadOnly="True" Style="{DynamicResource LoginTextBox}"
                          TextWrapping="Wrap" Text="{Binding ShowingToDoItem.Text}"/>
                 <Grid  Grid.Row="3">
@@ -88,11 +89,12 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="DONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
                             Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
-                        ConverterParameter=Inverted}"/>
+                        ConverterParameter=Inverted}" Command="{Binding ToggleToDoItemIsCheckedCommand}"/>
                     <Button Content="UNDONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
                             Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
-                        ConverterParameter=Normal}"/>
-                    <Button Content="DELETE" Grid.Column="1" Style="{DynamicResource ToDoItemActionButton}"/>
+                        ConverterParameter=Normal}" Command="{Binding ToggleToDoItemIsCheckedCommand}"/>
+                    <Button Content="DELETE" Grid.Column="1" Style="{DynamicResource ToDoItemActionButton}"
+                            Command="{Binding DeleteShowingToDoItemCommand}"/>
                 </Grid>
             </Grid>
         </Popup>
@@ -105,7 +107,7 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" Foreground="White" 
-                    FontSize="40" Command="{Binding OpenAddToDoItemPopupCommand}"/>
+                    FontSize="40" Command="{Binding AddToDoItemPopup.OpenCommand}"/>
             <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
         </Grid>
     </Grid>
