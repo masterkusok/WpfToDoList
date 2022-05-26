@@ -106,6 +106,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 _showingToDoItem.Check();
             }
+            UpdateListInDb();
             NotifyOnPropertyChanged(nameof(ShowingToDoItem));
         }
 

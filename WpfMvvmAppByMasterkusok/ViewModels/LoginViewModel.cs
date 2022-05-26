@@ -20,6 +20,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private PopupRepresenter _registerSuccessPopup;
         private PopupRepresenter _registerErrorPopup;
 
+        private User LoginedUser;
+
         public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
         
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
@@ -79,14 +81,20 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (_username != null && _password != null)
             {
                 BlockAllControls();
-                User user = null;
                 await Task.Run(async () =>
                 {
                     await Task.Delay(1500);
-                    user = GetUserFromDb();
+                    if (_dbService.CheckUserExists(_username, _password))
+                    {
+                        User user = GetUserFromDb();
+                        ChangeCurrentVM(new MainPageViewModel(_navigationStore, user));
+                    }
+                    else
+                    {
+                        UnlockAllControls();
+                        DisplayErrorPopup();
+                    }
                 });
-                ExecuteNavigation(user);
-                UnlockAllControls();
                 return;
             }
             DisplayErrorPopup();
@@ -116,15 +124,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             return _dbService.GetUser(_username, _password);
         }
 
-        private void ExecuteNavigation(User user)
-        {
-            if(user is not NotExistingUser)
-            {
-                ChangeCurrentVM(new MainPageViewModel(_navigationStore, user));
-                return;
-            }
-            DisplayErrorPopup();
-        }
 
         private async void DisplayErrorPopup()
         {
@@ -143,24 +142,25 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 await Task.Run(async () =>
                 {
                     await Task.Delay(1500);
-                    if(_dbService.AddUser(_username, _password))
+                    if (_dbService.AddUser(_username, _password))
                     {
                         completedSuccessfully = true;
                     }
                 });
+                DisplayOneOfRegisterPopups(completedSuccessfully);
                 UnlockAllControls();
-                if (completedSuccessfully)
-                {
-                    ExecuteRegisterNavigation();
-                    return;
-                }
-                DisplayRegisterErrorPopup();
+                
             }
         }
-
-        private void ExecuteRegisterNavigation()
+        
+        private void DisplayOneOfRegisterPopups(bool completedSuccessfully)
         {
-            DisplayRegisterSuccessPopupAndRedirect();
+            if (completedSuccessfully)
+            {
+                DisplayRegisterSuccessPopupAndRedirect();
+                return;
+            }
+            DisplayRegisterErrorPopup();
         }
 
         private async void DisplayRegisterSuccessPopupAndRedirect()
@@ -168,17 +168,11 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _registerSuccessPopup.Open();
             await Task.Delay(5000);
             _registerSuccessPopup.Close();
-            RedirectToLoginPage();
-        }
-
-        private void RedirectToLoginPage()
-        {
             ChangeCurrentVM(new LoginViewModel(_navigationStore));
         }
 
         private async void DisplayRegisterErrorPopup()
         {
-            // Maybe i will create PopupDisplayer class, to avoid this exactly similar functions
             _registerErrorPopup.Open();
             await Task.Delay(6500);
             _registerErrorPopup.Close();

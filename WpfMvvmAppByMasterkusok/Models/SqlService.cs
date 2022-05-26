@@ -32,27 +32,38 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         public bool AddUser(string username, string password)
         {
-            if(GetUser(username, password) is NotExistingUser)
+            if(!CheckUsernameIsAlreadyTaken(username))
             {
                 return MakeInsertRequestToSql(username, password);
             }
             return false;
         }
 
+        private bool CheckUsernameIsAlreadyTaken(string username)
+        {
+            return CheckUserExists(username, "");
+        }
+
         private bool MakeInsertRequestToSql(string username, string password)
         {
-            _connection.Open();
-            if (_connection.State == System.Data.ConnectionState.Open)
-            {
-                MySqlCommand command = new MySqlCommand($"INSERT INTO users (username, password, todo_json)" +
-                    $" VALUES(@Username, @Password, @Json)", _connection);
-                command.Parameters.AddWithValue("Username", username);
-                command.Parameters.AddWithValue("Password", password);
-                command.Parameters.AddWithValue("Json", JsonSerializer.Serialize(new List<ToDoItem>()));
-                command.ExecuteNonQuery();
-            }
+            OpenConnectionIfNotOpened();
+
+            MySqlCommand command = new MySqlCommand($"INSERT INTO users (username, password, todo_json)" +
+            $" VALUES(@Username, @Password, @Json)", _connection);
+            command.Parameters.AddWithValue("Username", username);
+            command.Parameters.AddWithValue("Password", password);
+            command.Parameters.AddWithValue("Json", JsonSerializer.Serialize(new List<ToDoItem>()));
+            command.ExecuteNonQuery();
+
             _connection.Close();
             return true;
+        }
+
+        private void OpenConnectionIfNotOpened()
+        {
+            if (_connection.State == System.Data.ConnectionState.Open)
+                return;
+            _connection.Open();
         }
 
         public bool DeleteUser(string username, string password)
@@ -60,46 +71,73 @@ namespace WpfMvvmAppByMasterkusok.Models
             throw new NotImplementedException();
         }
 
-        
+        public bool CheckUserExists(string username, string password)
+        {
+            OpenConnectionIfNotOpened();
+            MySqlCommand command = CreateSelectConcreteUserCommand(username, password);
+            MySqlDataReader reader = command.ExecuteReader();
+            bool exists = reader.Read();
+            reader.Close();
+            return exists;
+        }
+
         public User GetUser(string username, string password)
         {
-            User user = new NotExistingUser("noname", "", new ObservableCollection<ToDoItem>());
-            _connection.Open();
-            if (_connection.State == System.Data.ConnectionState.Open)
+            OpenConnectionIfNotOpened();
+
+            if (CheckUserExists(username, password))
             {
-                MySqlCommand command = new MySqlCommand($"SELECT * FROM users WHERE username = '{username}'" +
-                    $"AND password = '{password}'", _connection);
-                
-                user = TryToReadUsersData(command);
+                MySqlCommand command = CreateSelectConcreteUserCommand(username, password);
+                User user = TryToReadUsersData(command);
+                _connection.Close();
+                return user;
             }
-            _connection.Close();
-            return user;
+
+            throw new NullReferenceException();
+        }
+
+        private MySqlCommand CreateSelectConcreteUserCommand(string username, string password)
+        {
+            return new MySqlCommand($"SELECT * FROM users WHERE username = '{username}'" +
+                    $"{AppendPasswordConditionIfNeeds(password)}", _connection);
+        }
+
+        private string AppendPasswordConditionIfNeeds(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return "";
+            }
+            return $"AND password = '{password}'";
         }
 
         private User TryToReadUsersData(MySqlCommand command)
         {
             MySqlDataReader reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                string json_string = reader["todo_json"].ToString();
-                ObservableCollection<ToDoItem> toDoItems = new ObservableCollection<ToDoItem>();
-                try
-                {
-                    toDoItems = JsonSerializer.Deserialize<ObservableCollection<ToDoItem>>(json_string);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                return new User(reader["username"].ToString(), reader["password"].ToString(), toDoItems);
-            }
-            return new NotExistingUser("noname", "", new ObservableCollection<ToDoItem>());
+            reader.Read();
+            return ConstructUserFromUsersData(reader);
         }
+
+        private User ConstructUserFromUsersData(MySqlDataReader reader)
+        {
+            string json_string = reader["todo_json"].ToString();
+            ObservableCollection<ToDoItem> toDoItems = new ObservableCollection<ToDoItem>();
+            try
+            {
+                toDoItems = JsonSerializer.Deserialize<ObservableCollection<ToDoItem>>(json_string);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return new User(reader["username"].ToString(), reader["password"].ToString(), toDoItems);
+        }
+
         public bool UpdateUser(User sourceUser, User newVersionOfUser)
         {
-            if(GetUser(sourceUser.Username, sourceUser.Password) is not NotExistingUser)
+            if(CheckUserExists(sourceUser.Username, sourceUser.Password))
             {
-                _connection.Open();
+                OpenConnectionIfNotOpened();
                 ExecuteUpdateCommand(sourceUser, newVersionOfUser);
                 _connection.Close();
                 return true;
@@ -120,5 +158,6 @@ namespace WpfMvvmAppByMasterkusok.Models
             command.Parameters.AddWithValue("OldPassword", source.Password);
             command.ExecuteNonQuery();
         }
+
     }
 }

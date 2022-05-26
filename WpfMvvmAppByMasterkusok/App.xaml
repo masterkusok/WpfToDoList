@@ -151,8 +151,5 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
-        <BooleanToVisibilityConverter x:Key="InvertableBooleanToVisConverter">
-            
-        </BooleanToVisibilityConverter>
     </Application.Resources>
 </Application>

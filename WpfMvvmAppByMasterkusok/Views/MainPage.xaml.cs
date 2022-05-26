@@ -1,7 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Data;
-using WpfMvvmAppByMasterkusok.Models;
-using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.ViewModels;
 
 namespace WpfMvvmAppByMasterkusok.Views
@@ -15,7 +12,6 @@ namespace WpfMvvmAppByMasterkusok.Views
         {
             InitializeComponent();
             this.DataContext = vm;
-             
         }
     }
 }

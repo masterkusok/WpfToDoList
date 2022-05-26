@@ -10,7 +10,7 @@
       Title="MainPage">
     <Page.Resources>
         <ResourceDictionary>
-            <Style TargetType="ListView" x:Key="MainListView">
+            <Style TargetType="ListBox" x:Key="MainListBox">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
             </Style>
@@ -29,22 +29,23 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="6*"/>
                 <ColumnDefinition/>
-            </Grid.ColumnDefinitions> 
-            <ListView Grid.Column="1" ScrollViewer.CanContentScroll="False"
-                      ItemsSource="{Binding ToDoList}" Style="{DynamicResource MainListView}">
-                <ListView.ItemTemplate>
+            </Grid.ColumnDefinitions>
+            <ListBox Grid.Column="1" ScrollViewer.CanContentScroll="False"
+                      ItemsSource="{Binding ToDoList}" Style="{DynamicResource MainListBox}"
+                     HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel CanHorizontallyScroll="False" Orientation="Horizontal">
-                            <TextBlock  TextTrimming="WordEllipsis" MaxWidth="200" Style="{DynamicResource TextBlockStyle}"
-                                     Text="{Binding Path=Text}" HorizontalAlignment="Left"/>
+                        <DockPanel>
+                            <TextBlock  TextTrimming="WordEllipsis" MaxWidth="400" Style="{DynamicResource TextBlockStyle}"
+                                     Text="{Binding Path=Text}" DockPanel.Dock="Left"/>
                             <Button Content="Go To" CommandParameter="{Binding Path=Id}" 
                                     Command="{Binding DataContext.ToDoItemPopup.OpenCommand, ElementName=mainPage}" 
                                     Style="{DynamicResource ButtonWithoutHoverAndBg}"
-                                    HorizontalAlignment="Right"/>
-                        </StackPanel>
+                                    DockPanel.Dock="Right"/>
+                        </DockPanel>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
         <!-- Popup, which process adding ToDoItems to list -->
         <Popup Placement="Center" IsOpen="{Binding AddToDoItemPopup.IsOpened}" Style="{DynamicResource FadingAndTransparentPopup}"
