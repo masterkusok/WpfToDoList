@@ -4,12 +4,16 @@
              xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
+        <Color x:Key="BGColor1"/>
+        <Color x:Key="BGColor2"/>
+        <Color x:Key="FGColor"/>
+        <Color x:Key="OPColor"/>
 
         <!-- All window style -->
         <Style TargetType="Window" x:Key="WindowStyle">
             <Setter Property="Background">
                 <Setter.Value>
-                    <SolidColorBrush Color="#2e2e2e"/>
+                    <SolidColorBrush Color="{StaticResource BGColor1}"/>
                 </Setter.Value>
             </Setter>
         </Style>
