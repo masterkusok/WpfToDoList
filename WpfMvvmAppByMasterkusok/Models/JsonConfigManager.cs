@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.Json;
+﻿using System.IO;
 using System.Windows.Media;
+using Newtonsoft.Json;
 
 namespace WpfMvvmAppByMasterkusok.Models
 {
@@ -11,7 +8,12 @@ namespace WpfMvvmAppByMasterkusok.Models
     {
         private string _configFileUrl = $"{Directory.GetCurrentDirectory()}/config.json";
 
-        public Theme CurrentTheme { get; set; }
+        public Configuration Config { get; set; }
+
+        public JsonConfigManager()
+        {
+            Config = new Configuration();
+        }
 
         public void LoadConfiguration()
         {
@@ -26,8 +28,7 @@ namespace WpfMvvmAppByMasterkusok.Models
         private void LoadConfigurationFromJson()
         {
             string jsonString = File.ReadAllText(_configFileUrl);
-            JsonConfigManager storedManager = JsonSerializer.Deserialize<JsonConfigManager>(jsonString);
-            CurrentTheme = storedManager.CurrentTheme;
+            Config = JsonConvert.DeserializeObject<Configuration>(jsonString);
         }
 
         private void CreateNewConfigurationFile()
@@ -38,7 +39,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         private void SetupDefaultConfiguration()
         {
-            CurrentTheme = new Theme()
+            Config.CurrentTheme = new Theme()
             {
                 BGBrush1 = new SolidColorBrush(Color.FromRgb(46, 46, 46)),
                 BGBrush2 = new SolidColorBrush(Color.FromRgb(26, 26, 26)),
@@ -49,7 +50,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         public void SaveConfiguration()
         {
-            File.WriteAllText(_configFileUrl, JsonSerializer.Serialize(this));
+            File.WriteAllText(_configFileUrl, JsonConvert.SerializeObject(Config));
         }
     }
 }

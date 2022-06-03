@@ -2,7 +2,7 @@
 {
     public interface IConfigManager
     {
-        public Theme CurrentTheme { get; }
+        public Configuration Config { get; }
         public void LoadConfiguration();
         public void SaveConfiguration();
     }

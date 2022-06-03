@@ -1,6 +1,4 @@
-﻿
-using WpfMvvmAppByMasterkusok.ViewModels;
-using System;
+﻿using WpfMvvmAppByMasterkusok.ViewModels;
 using System.Windows;
 
 namespace WpfMvvmAppByMasterkusok
@@ -11,17 +9,19 @@ namespace WpfMvvmAppByMasterkusok
     public partial class App : Application
     {
         AppViewModel _appVM = new AppViewModel();
+
         App()
         {
-           SetThemeColors();
+            SetThemeColors();
         }
 
         private void SetThemeColors()
-        {
-            Application.Current.Resources["BGColor1"] = _appVM.CurrentTheme.BGBrush1;
-            Application.Current.Resources["BGColor2"] = _appVM.CurrentTheme.BGBrush2;
-            Application.Current.Resources["FGColor"] = _appVM.CurrentTheme.FGBrush;
-            Application.Current.Resources["OPColor"] = _appVM.CurrentTheme.OPBrush;
+        {   
+            Application.Current.Resources.Add("BGColor1",  _appVM.Config.CurrentTheme.BGBrush1);
+            Application.Current.Resources.Add("BGColor2", _appVM.Config.CurrentTheme.BGBrush2);
+            Application.Current.Resources.Add("FGColor", _appVM.Config.CurrentTheme.FGBrush);
+            Application.Current.Resources.Add("OPColor", _appVM.Config.CurrentTheme.OPBrush);
         }
+
     }
 }

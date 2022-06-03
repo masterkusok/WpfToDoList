@@ -27,7 +27,9 @@ namespace WpfMvvmAppByMasterkusok.Models
             if(File.Exists("connectionstring.txt"))
             {
                 _connectionString = File.ReadAllText("connectionstring.txt");
+                return;
             }
+            throw new Exception("Can't load connection string");
         }
 
         public bool AddUser(string username, string password)

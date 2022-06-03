@@ -4,6 +4,7 @@ using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.Models;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class LoginViewModel : BaseViewModel
@@ -13,6 +14,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private bool _controlsEnabled = true;
         private bool _isRegistrationMode = false;
+        private bool _rememberUser = false;
 
         private PopupRepresenter _loginErrorPopup;
         private PopupRepresenter _loadingPopup;
@@ -23,8 +25,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private User LoginedUser;
 
         public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
-        
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
+        public bool RememberUser { get => _rememberUser; set => _rememberUser = value; }
         public PopupRepresenter LoadingPopup { get => _loadingPopup; set => _loadingPopup = value; }
         public PopupRepresenter RegisterPopup { get => _registerPopup; set => _registerPopup = value; }
         public PopupRepresenter RegisterSuccessPopup { get => _registerSuccessPopup; set => _registerSuccessPopup = value; }
@@ -34,11 +36,13 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         public string Username { get => _username; set => _username = value; }
 
         private IDbService _dbService;
+        private IConfigManager _configManager;
+
         public ICommand LoginCommand { get; set; }
         public ICommand RegisterCommand { get; set; }
         public ICommand SwitchRegisterMode { get; set; }
 
-        public LoginViewModel(NavigationStore navigationStore)
+        public LoginViewModel(NavigationStore navigationStore, IConfigManager configManager)
         {
             _loadingPopup = new PopupRepresenter(nameof(LoadingPopup), this);
             _registerSuccessPopup = new PopupRepresenter(nameof(RegisterSuccessPopup), this);
@@ -48,6 +52,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             _navigationStore = navigationStore;
             _dbService = new SqlService();
+            _configManager = configManager;
+
             LoginCommand = new RelayCommand(obj =>
             {
                 LoginBtnClicked(obj);
@@ -81,24 +87,39 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (_username != null && _password != null)
             {
                 BlockAllControls();
+                User user = null;
                 await Task.Run(async () =>
                 {
                     await Task.Delay(1500);
                     if (_dbService.CheckUserExists(_username, _password))
                     {
-                        User user = GetUserFromDb();
-                        ChangeCurrentVM(new MainPageViewModel(_navigationStore, user));
+                        user = GetUserFromDb();
                     }
-                    else
-                    {
-                        UnlockAllControls();
-                        DisplayErrorPopup();
-                    }
+
                 });
+
+                if(user != null)
+                {
+                    SaveLoginedUserToConfigIfNeccessary(user);
+                    ChangeCurrentVM(new MainPageViewModel(_navigationStore, user, _configManager));
+                    return;
+                }
+                UnlockAllControls();
+                DisplayErrorPopup();
                 return;
             }
             DisplayErrorPopup();
         }
+
+        private void SaveLoginedUserToConfigIfNeccessary(User user)
+        {
+            if (_rememberUser)
+            {
+                _configManager.Config.LoginedUser = user;
+                _configManager.SaveConfiguration();
+            }
+        }
+
 
         private void GetPasswordFromPasswordBox(PasswordBox box)
         {
@@ -168,7 +189,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _registerSuccessPopup.Open();
             await Task.Delay(5000);
             _registerSuccessPopup.Close();
-            ChangeCurrentVM(new LoginViewModel(_navigationStore));
+            ChangeCurrentVM(new LoginViewModel(_navigationStore, _configManager));
         }
 
         private async void DisplayRegisterErrorPopup()

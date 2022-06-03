@@ -5,9 +5,9 @@ namespace WpfMvvmAppByMasterkusok.Models
 {
     public class Theme
     {
-        public Brush BGBrush1 { get; set; }
-        public Brush BGBrush2 { get; set; }
-        public Brush FGBrush { get; set; }
-        public Brush OPBrush { get; set; }
+        public SolidColorBrush BGBrush1 { get; set; }
+        public SolidColorBrush BGBrush2 { get; set; }
+        public SolidColorBrush FGBrush { get; set; }
+        public SolidColorBrush OPBrush { get; set; }
     }
 }

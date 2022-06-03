@@ -34,7 +34,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 NotifyOnPropertyChanged(nameof(ToDoList));
             } 
         }
-        public MainPageViewModel(NavigationStore navigationStore, User user)
+        public MainPageViewModel(NavigationStore navigationStore, User user, IConfigManager configManager)
         {
             _addToDoItemPopup = new PopupRepresenter(nameof(AddToDoItemPopup), this);
             _toDoItemPopup = new PopupRepresenter(nameof(ToDoItemPopup), this);

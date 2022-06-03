@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Windows.Controls;
 using WpfMvvmAppByMasterkusok.Views;
 using WpfMvvmAppByMasterkusok.ViewModels;
+using WpfMvvmAppByMasterkusok.Models;
 
 namespace WpfMvvmAppByMasterkusok.Stores
 {
@@ -23,7 +23,14 @@ namespace WpfMvvmAppByMasterkusok.Stores
         public event Action CurrentPageChanged;
         public NavigationStore()
         {
-            _currentVM = new LoginViewModel(this);
+            JsonConfigManager jsonConfigManager = new JsonConfigManager();
+            jsonConfigManager.LoadConfiguration();
+            if(jsonConfigManager.Config.LoginedUser != null)
+            {
+                _currentVM = new MainPageViewModel(this, jsonConfigManager.Config.LoginedUser, jsonConfigManager);
+                return;
+            }
+            _currentVM = new LoginViewModel(this, jsonConfigManager);
         }
     }
 }

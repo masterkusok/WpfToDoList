@@ -20,6 +20,11 @@ namespace WpfMvvmAppByMasterkusok.Models
             get => $"Created on {_creationDate.Date.ToShortDateString()}";
         }
 
+        public ToDoItem()
+        {
+
+        }
+
         [JsonConstructor]
         public ToDoItem(string text, bool everydayTask, bool isChecked, DateTime creationDate, int id)
         {

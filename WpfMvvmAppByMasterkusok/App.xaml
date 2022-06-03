@@ -4,28 +4,21 @@
              xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-        <Color x:Key="BGColor1"/>
-        <Color x:Key="BGColor2"/>
-        <Color x:Key="FGColor"/>
-        <Color x:Key="OPColor"/>
 
         <!-- All window style -->
         <Style TargetType="Window" x:Key="WindowStyle">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush Color="{StaticResource BGColor1}"/>
-                </Setter.Value>
+            <Setter Property="Background" Value="{StaticResource BGColor1}">
             </Setter>
         </Style>
         <!-- Style of all big labels -->
         <Style TargetType="Label" x:Key="LargeLabelStyle">
             <Setter Property="FontSize" Value="50"/>
-            <Setter Property="Foreground" Value="#5065d9"/>
+            <Setter Property="Foreground" Value="{StaticResource OPColor}"/>
         </Style>
         <!-- Style for small labels -->
         <Style TargetType="Label" x:Key="SmallLabelStyle">
             <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
         </Style>
         <!-- Beautiful login Text boxes-->
         <Style TargetType="TextBox" x:Key="LoginTextBox">
@@ -33,16 +26,16 @@
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="TextAlignment" Value="Left"/>
-            <Setter Property="Background" Value="#1a1a1a"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource BGColor2}"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
         </Style>
         <!-- Beautiful login password boxes-->
         <Style TargetType="PasswordBox" x:Key="LoginPasswordBox">
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Background" Value="#1a1a1a"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource BGColor2}"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
         </Style>
         <!--Button without bg and hover effects-->
         <Style TargetType="Button" x:Key="ButtonWithoutHoverAndBg">
@@ -51,11 +44,11 @@
                     <SolidColorBrush>Transparent</SolidColorBrush>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                        <Border Name="border" BorderThickness="0" Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
@@ -86,11 +79,11 @@
                     <SolidColorBrush>#5065d9</SolidColorBrush>
                 </Setter.Value>
             </Setter>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Name="border" BorderThickness="0" BorderBrush="#5065d9"
+                        <Border Name="border" BorderThickness="0" BorderBrush="{StaticResource OPColor}"
                                 Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -104,7 +97,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value="#4052b3"/>
+                    <Setter Property="Background" Value="{StaticResource FGColor}"/>
                     <Setter Property="Cursor">
                         <Setter.Value>
                             <Cursor >
@@ -126,6 +119,10 @@
             <Setter Property="Width" Value="350"/>
             <Setter Property="Height" Value="180"/>
             <Setter Property="PopupAnimation" Value="Fade"/>
+        </Style>
+
+        <Style x:Key="LoadingPopupGrid" TargetType="Grid">
+            <Setter Property="Background" Value="{StaticResource BGColor2}"/>
         </Style>
 
         <!-- Spinning loader animation -->
@@ -152,7 +149,7 @@
         </Style>
 
         <Style TargetType="TextBlock" x:Key="TextBlockStyle">
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
     </Application.Resources>

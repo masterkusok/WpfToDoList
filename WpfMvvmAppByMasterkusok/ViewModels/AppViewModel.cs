@@ -7,7 +7,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
     {
         private IConfigManager _configManager;
 
-        public Theme CurrentTheme {  get => _configManager.CurrentTheme; }
+        public Configuration Config {  get => _configManager.Config; }
 
         public AppViewModel()
         {

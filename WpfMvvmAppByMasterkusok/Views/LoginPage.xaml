@@ -34,13 +34,14 @@
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="3*"/>
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
             
             <!-- This popup is being opened while model is performing request to database -->
             <Popup Placement="Center" IsOpen="{Binding LoadingPopup.IsOpened}" Style="{DynamicResource LoginOrRegisterPopup}">
-                <Grid Background="#1f1f1f">
+                <Grid Style="{DynamicResource LoadingPopupGrid}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
@@ -94,19 +95,23 @@
             <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
             
             <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
-            
-            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Login" 
+
+            <CheckBox Grid.Row="6" Foreground="{StaticResource FGColor}" Content="Remember me" HorizontalAlignment="Center"
+                      HorizontalContentAlignment="Center" IsChecked="{Binding RememberUser}" 
+                      Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7" Content="Login" 
                     FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}" 
                     Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
 
-            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6" Content="Register" 
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7" Content="Register" 
                     FontSize="20" Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}"
                     Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"/>
             
             <Button Content="Don't have account? Register!" Style="{DynamicResource ButtonWithoutHoverAndBg}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="7" Foreground="AliceBlue"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="8" Foreground="{StaticResource FGColor}"
                     Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}" 
                     Command="{Binding SwitchRegisterMode}"/>
         </Grid>
