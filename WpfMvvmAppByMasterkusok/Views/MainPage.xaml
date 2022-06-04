@@ -38,10 +38,12 @@
                         <DockPanel>
                             <TextBlock  TextTrimming="WordEllipsis" MaxWidth="400" Style="{DynamicResource TextBlockStyle}"
                                      Text="{Binding Path=Text}" DockPanel.Dock="Left"/>
+                            <Image Visibility="{Binding Path=IsChecked, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"
+                                   Source="/WpfMvvmAppByMasterkusok;component/Images/TaskDone.png" MaxWidth="50" MaxHeight="50"
+                                   DockPanel.Dock="Right"/>
                             <Button Content="Go To" CommandParameter="{Binding Path=Id}" 
                                     Command="{Binding DataContext.ToDoItemPopup.OpenCommand, ElementName=mainPage}" 
-                                    Style="{DynamicResource ButtonWithoutHoverAndBg}"
-                                    DockPanel.Dock="Right"/>
+                                    Style="{DynamicResource ButtonWithoutHoverAndBg}" DockPanel.Dock="Right"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -99,17 +101,19 @@
                 </Grid>
             </Grid>
         </Popup>
-        
-        <Grid>
+
+        <Grid Background="{StaticResource OPColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" Foreground="White" 
+            
+            <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" 
+                    Foreground="{StaticResource FGColor}" 
                     FontSize="40" Command="{Binding AddToDoItemPopup.OpenCommand}"/>
-            <Label Style="{DynamicResource LargeLabelStyle}" Content="Main Page"/>
+            <Label Style="{DynamicResource LargeLabelStyle}" Foreground="{StaticResource FGColor}" Content="Main Page"/>
         </Grid>
     </Grid>
 </Page>

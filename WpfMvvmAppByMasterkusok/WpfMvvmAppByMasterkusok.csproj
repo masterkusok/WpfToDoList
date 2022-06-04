@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\TaskDone.png" />
     <None Remove="loader_white.png" />
   </ItemGroup>
 
@@ -17,6 +18,7 @@
 
   <ItemGroup>
     <Resource Include="Images\loader_white.png" />
+    <Resource Include="Images\TaskDone.png" />
   </ItemGroup>
 
   <ItemGroup>

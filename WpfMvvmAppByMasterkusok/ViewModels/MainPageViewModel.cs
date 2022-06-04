@@ -108,6 +108,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             }
             UpdateListInDb();
             NotifyOnPropertyChanged(nameof(ShowingToDoItem));
+            NotifyOnPropertyChanged(nameof(ToDoList));
         }
 
         private void DeleteShowingToDoItem()
