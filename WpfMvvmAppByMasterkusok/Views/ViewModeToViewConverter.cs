@@ -19,9 +19,13 @@ namespace WpfMvvmAppByMasterkusok.Views
             {
                 return new MainPage((MainPageViewModel)value);
             }
+            else if (value is SettingsViewModel)
+            {
+                return new SettingsPage((SettingsViewModel)value);
+            }
             else
             {
-                return null;
+                throw new Exception("Client is trying to switch to unknown viewmodel.");
             }
         }
 

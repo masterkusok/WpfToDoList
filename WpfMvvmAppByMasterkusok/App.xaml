@@ -152,5 +152,37 @@
             <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="FontSize" Value="20"/>
         </Style>
+
+        <Style TargetType="TabControl" x:Key="TabControlStyle">
+            <Setter Property="Background" Value="{StaticResource BGColor2}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="TabStripPlacement" Value="Left"/>
+            <Style.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="Background" Value="{StaticResource BGColor2}"/>
+                    <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid Background="Transparent">
+                                    <Border Background="{StaticResource BGColor1}" BorderThickness="0" x:Name="border">
+                                        <ContentPresenter ContentSource="Header"
+                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="{StaticResource BGColor2}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Style.Resources>
+        </Style>
     </Application.Resources>
 </Application>

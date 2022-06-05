@@ -92,10 +92,12 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="DONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
                             Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
-                        ConverterParameter=Inverted}" Command="{Binding ToggleToDoItemIsCheckedCommand}"/>
+                        ConverterParameter=Inverted}" Command="{Binding ToggleToDoItemIsCheckedCommand}"
+                            IsEnabled="{Binding IsDoneBtnEnabled}"/>
                     <Button Content="UNDONE" Grid.Column="0" Style="{DynamicResource ToDoItemActionButton}"
                             Visibility="{Binding ShowingToDoItem.IsChecked, Converter={local:BoolToVisMarkup},
-                        ConverterParameter=Normal}" Command="{Binding ToggleToDoItemIsCheckedCommand}"/>
+                        ConverterParameter=Normal}" Command="{Binding ToggleToDoItemIsCheckedCommand}"
+                            IsEnabled="{Binding IsDoneBtnEnabled}"/>
                     <Button Content="DELETE" Grid.Column="1" Style="{DynamicResource ToDoItemActionButton}"
                             Command="{Binding DeleteShowingToDoItemCommand}"/>
                 </Grid>
@@ -112,7 +114,11 @@
             
             <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="+" 
                     Foreground="{StaticResource FGColor}" 
-                    FontSize="40" Command="{Binding AddToDoItemPopup.OpenCommand}"/>
+                    FontSize="50" Command="{Binding AddToDoItemPopup.OpenCommand}" MaxWidth="100" MaxHeight="100"/>
+            
+            <Button Grid.Column="2" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="S" 
+                    Foreground="{StaticResource FGColor}" MaxWidth="100" MaxHeight="100"  FontSize="50"
+                    Command="{Binding MoveToSettingsPageCommand}"/>
             <Label Style="{DynamicResource LargeLabelStyle}" Foreground="{StaticResource FGColor}" Content="Main Page"/>
         </Grid>
     </Grid>

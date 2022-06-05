@@ -42,10 +42,6 @@ namespace WpfMvvmAppByMasterkusok.Models
             _isChecked = false;
         }
         
-        public void Check()
-        {
-            _isChecked = true;
-        }
         public bool CheckIfOverdue()
         {
             if (EverydayTask)

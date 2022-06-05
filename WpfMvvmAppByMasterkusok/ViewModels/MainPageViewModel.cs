@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using WpfMvvmAppByMasterkusok.Commands;
@@ -10,7 +11,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
     internal class MainPageViewModel : BaseViewModel
     {
 
-        private IDbService _dbService; 
+        private IDbService _dbService;
+        private IConfigManager _configManager;
         private User _user;
         private bool _isNewToDoItemEverDay;
         private string _newToDoItemText;
@@ -18,11 +20,14 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private PopupRepresenter _toDoItemPopup;
         private PopupRepresenter _addToDoItemPopup;
         public bool IsNewToDoItemEverDay { get => _isNewToDoItemEverDay; set => _isNewToDoItemEverDay = value; }
+        public bool IsDoneBtnEnabled { get; set; }
         public string NewToDoItemText { get => _newToDoItemText; set => _newToDoItemText = value; }
         
         public ICommand CreateNewToDoItemCommand { get; set; }
         public ICommand ToggleToDoItemIsCheckedCommand { get; set; }
         public ICommand DeleteShowingToDoItemCommand { get; set; }
+        public ICommand MoveToSettingsPageCommand { get; set; }
+
         public ToDoItem ShowingToDoItem { get => _showingToDoItem; set => _showingToDoItem = value; }
         public PopupRepresenter AddToDoItemPopup { get => _addToDoItemPopup; set=> _addToDoItemPopup = value; }
         public PopupRepresenter ToDoItemPopup { get => _toDoItemPopup; set => _toDoItemPopup = value; }
@@ -36,6 +41,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         }
         public MainPageViewModel(NavigationStore navigationStore, User user, IConfigManager configManager)
         {
+            IsDoneBtnEnabled = true;
+
             _addToDoItemPopup = new PopupRepresenter(nameof(AddToDoItemPopup), this);
             _toDoItemPopup = new PopupRepresenter(nameof(ToDoItemPopup), this);
 
@@ -43,6 +50,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _user = user;
             _navigationStore = navigationStore;
             _dbService = new SqlService();
+            _configManager = configManager;
 
             BuildUpCommands();
         }
@@ -68,7 +76,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             DeleteShowingToDoItemCommand = new RelayCommand(obj =>
             {
                 DeleteShowingToDoItem();
-            }); 
+            });
+
+            MoveToSettingsPageCommand = new RelayCommand(obj =>
+            {
+                MoveToSettingsPage();
+            });
+        }
+
+        private void MoveToSettingsPage()
+        {
+            _navigationStore.CurrentVM = new SettingsViewModel(_navigationStore, _configManager, _user);
         }
 
         private void CreateNewToDoItem()
@@ -98,17 +116,41 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void ToggleToDoItemIsChecked()
         {
+            ToggleToDoItemCheckedStateAndUpdateList();
+            UpdateListInDb();
+            DisableDoneButton();
+            NotifyOnPropertyChanged(nameof(ToDoList));
+            NotifyOnPropertyChanged(nameof(ShowingToDoItem));
+        }
+
+        private void ToggleToDoItemCheckedStateAndUpdateList()
+        {
+            int indexBefore = ToDoList.IndexOf(ShowingToDoItem);
+            ToDoList.Remove(_showingToDoItem);
             if (_showingToDoItem.IsChecked)
             {
                 _showingToDoItem.IsChecked = false;
             }
             else
             {
-                _showingToDoItem.Check();
+                _showingToDoItem.IsChecked = true;
             }
-            UpdateListInDb();
-            NotifyOnPropertyChanged(nameof(ShowingToDoItem));
-            NotifyOnPropertyChanged(nameof(ToDoList));
+            ToDoList.Insert(indexBefore, ShowingToDoItem);
+        }
+
+        private async void DisableDoneButton()
+        {
+            await Task.Run(() =>
+            {
+                if (IsDoneBtnEnabled)
+                {
+                    IsDoneBtnEnabled = false;
+                    NotifyOnPropertyChanged(nameof(IsDoneBtnEnabled));
+                    Task.Delay(2000);
+                    IsDoneBtnEnabled = true;
+                    NotifyOnPropertyChanged(nameof(IsDoneBtnEnabled));
+                }
+            });
         }
 
         private void DeleteShowingToDoItem()
