@@ -20,12 +20,15 @@
             </Grid.ColumnDefinitions>
             <Label Content="Settings" Style="{DynamicResource LargeLabelStyle}"/>
             <Button Grid.Column="1" Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="Go Back"
-                    FontSize="25" Foreground="{StaticResource FGColor}" HorizontalAlignment="Right" Margin="0, 0, 20, 0"/>
+                    FontSize="25" Foreground="{StaticResource FGColor}" HorizontalAlignment="Right" Margin="0, 0, 20, 0"
+                    Command="{Binding GoBackCommand}"/>
         </Grid>
         
         <TabControl Grid.Row="1" Style="{DynamicResource TabControlStyle}">
             <TabItem Header="Account">
-                
+                <Frame Content="{Binding CurrentAccountSettingsView, Converter={local:ViewModelToView}}">
+                    
+                </Frame>
             </TabItem>
             <TabItem Header="View">
                 
