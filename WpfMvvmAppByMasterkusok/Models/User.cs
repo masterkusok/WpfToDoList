@@ -9,8 +9,8 @@ namespace WpfMvvmAppByMasterkusok.Models
         private string _username;
         private string _password;
         protected ObservableCollection<ToDoItem> _toDoItems;
-        public string Username { get => _username; protected set => _username = value; }
-        public string Password { get => _password; protected set => _password = value; }
+        public string Username { get => _username; set => _username = value; }
+        public string Password { get => _password;  set => _password = value; }
         public ObservableCollection<ToDoItem> ToDoItems { get => _toDoItems; set => _toDoItems = value; }
         public User(string username, string password, ObservableCollection<ToDoItem> toDoItems)
         {
@@ -24,10 +24,12 @@ namespace WpfMvvmAppByMasterkusok.Models
             item.Id = _toDoItems.Count + 1;
             _toDoItems.Add(item);
         }
+
         public void RemoveToDoItem(ToDoItem item)
         {
             _toDoItems.Remove(item);
         }
+
         public ToDoItem GetToDoItemById(int id)
         {
             ToDoItem foundItem = null;
@@ -41,5 +43,6 @@ namespace WpfMvvmAppByMasterkusok.Models
             }
             return foundItem;
         }
+
     }
 }
