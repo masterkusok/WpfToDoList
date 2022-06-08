@@ -16,22 +16,26 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool _isRegistrationMode = false;
         private bool _rememberUser = false;
 
+        #region Popups
         private PopupRepresenter _loginErrorPopup;
         private PopupRepresenter _loadingPopup;
         private PopupRepresenter _registerPopup;
         private PopupRepresenter _registerSuccessPopup;
         private PopupRepresenter _registerErrorPopup;
+        private PopupRepresenter _dbConnectionErrorPopup;
 
-        private User LoginedUser;
-
-        public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
-        public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
-        public bool RememberUser { get => _rememberUser; set => _rememberUser = value; }
         public PopupRepresenter LoadingPopup { get => _loadingPopup; set => _loadingPopup = value; }
         public PopupRepresenter RegisterPopup { get => _registerPopup; set => _registerPopup = value; }
         public PopupRepresenter RegisterSuccessPopup { get => _registerSuccessPopup; set => _registerSuccessPopup = value; }
         public PopupRepresenter RegisterErrorPopup { get => _registerErrorPopup; set => _registerErrorPopup = value; }
         public PopupRepresenter LoginErrorPopup { get => _loginErrorPopup; set => _loginErrorPopup = value;}
+        public PopupRepresenter DBConnectionErrorPopup { get => _dbConnectionErrorPopup;
+            set => _dbConnectionErrorPopup = value; }
+        #endregion
+
+        public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
+        public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
+        public bool RememberUser { get => _rememberUser; set => _rememberUser = value; }
 
         public string Username { get => _username; set => _username = value; }
 
@@ -49,6 +53,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _registerErrorPopup = new PopupRepresenter(nameof(RegisterErrorPopup), this);
             _registerPopup = new PopupRepresenter(nameof(RegisterPopup), this);
             _loginErrorPopup = new PopupRepresenter(nameof(LoginErrorPopup), this);
+            _dbConnectionErrorPopup = new PopupRepresenter(nameof(DBConnectionErrorPopup), this);
 
             _navigationStore = navigationStore;
             _dbService = new SqlService();
@@ -83,8 +88,13 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void LoginBtnClicked(object parameter)
         {
+            if (!_dbService.CanBeConnected()) {
+                DisplayDBConnectionErrorPopup();
+                return;
+            }
+
             GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (_username != null && _password != null)
+            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
             {
                 BlockAllControls();
                 User user = null;
@@ -105,10 +115,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                     return;
                 }
                 UnlockAllControls();
-                DisplayErrorPopup();
+                DisplayLoginErrorPopup();
                 return;
             }
-            DisplayErrorPopup();
+            DisplayLoginErrorPopup();
+        }
+
+        private async void DisplayDBConnectionErrorPopup()
+        {
+            _dbConnectionErrorPopup.Open();
+            await Task.Delay(6500);
+            _dbConnectionErrorPopup.Close();
         }
 
         private void SaveLoginedUserToConfigIfNeccessary(User user)
@@ -146,7 +163,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         }
 
 
-        private async void DisplayErrorPopup()
+        private async void DisplayLoginErrorPopup()
         {
             _loginErrorPopup.Open();
             await Task.Delay(6500);
@@ -156,7 +173,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private async void TryToRegister(object parameter)
         {
             GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (_username != null && _password != null)
+            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
             {
                 bool completedSuccessfully = false;
                 BlockAllControls();
@@ -169,9 +186,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                     }
                 });
                 DisplayOneOfRegisterPopups(completedSuccessfully);
-                UnlockAllControls();
-                
+                UnlockAllControls();   
             }
+            DisplayOneOfRegisterPopups(false);
         }
         
         private void DisplayOneOfRegisterPopups(bool completedSuccessfully)

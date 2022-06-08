@@ -68,6 +68,14 @@ namespace WpfMvvmAppByMasterkusok.Models
             _connection.Open();
         }
 
+        private void CloseConnectionIfNotClosed()
+        {
+            if (_connection.State == System.Data.ConnectionState.Closed)
+                return;
+            _connection.Close();
+            
+        }
+
         public bool DeleteUser(string username, string password)
         {
             throw new NotImplementedException();
@@ -86,7 +94,7 @@ namespace WpfMvvmAppByMasterkusok.Models
         public User GetUser(string username, string password)
         {
             OpenConnectionIfNotOpened();
-
+            int i = 5;
             if (CheckUserExists(username, password))
             {
                 MySqlCommand command = CreateSelectConcreteUserCommand(username, password);
@@ -161,5 +169,23 @@ namespace WpfMvvmAppByMasterkusok.Models
             command.ExecuteNonQuery();
         }
 
+        public bool CanBeConnected()
+        {
+            CloseConnectionIfNotClosed();
+            try
+            {
+                bool successfully = false;
+                _connection.Open();
+                successfully = _connection.State == System.Data.ConnectionState.Open;
+                _connection.Close();
+                return successfully;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            CloseConnectionIfNotClosed();
+            return false;
+        }
     }
 }

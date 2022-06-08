@@ -41,7 +41,7 @@ namespace WpfMvvmAppByMasterkusok.Models
             _creationDate = DateTime.Today;
             _isChecked = false;
         }
-        
+
         public bool CheckIfOverdue()
         {
             if (EverydayTask)

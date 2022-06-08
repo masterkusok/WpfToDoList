@@ -114,13 +114,6 @@
             <Setter Property="PopupAnimation" Value="Fade"/>
         </Style>
 
-        <Style x:Key="LoginOrRegisterPopup" TargetType="Popup">
-            <Setter Property="AllowsTransparency" Value="True"/>
-            <Setter Property="Width" Value="350"/>
-            <Setter Property="Height" Value="180"/>
-            <Setter Property="PopupAnimation" Value="Fade"/>
-        </Style>
-
         <Style x:Key="LoadingPopupGrid" TargetType="Grid">
             <Setter Property="Background" Value="{StaticResource BGColor2}"/>
         </Style>
@@ -151,6 +144,27 @@
         <Style TargetType="TextBlock" x:Key="TextBlockStyle">
             <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="FontSize" Value="20"/>
+        </Style>
+
+        <Style TargetType="Popup" x:Key="ErrorPopup">
+            <Setter Property="Placement" Value="Right"/>
+            <Setter Property="MaxWidth" Value="210"/>
+            <Setter Property="MaxHeight" Value="110"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="PopupAnimation" Value="Fade"/>
+        </Style>
+
+        <Style TargetType="ContentControl" x:Key="ErrorPopupContent">
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel Background="#bf2a2a" Width="330" Height="200">
+                            <TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"
+                                       FontSize="13" Foreground="{StaticResource FGColor}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="TabControl" x:Key="TabControlStyle">
