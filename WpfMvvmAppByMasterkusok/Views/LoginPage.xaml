@@ -22,8 +22,11 @@
             </Grid.RowDefinitions>
             <Button Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"
                     Command="{Binding SwitchRegisterMode}"
-                    Style="{DynamicResource ButtonWithoutHoverAndBg}"
-                    Content="Go back" FontSize="20"/>
+                    Style="{DynamicResource ButtonWithoutHoverAndBg}">
+                <Viewbox>
+                    <Label Content="Go back" Foreground="{StaticResource FGColor}"/>
+                </Viewbox>
+            </Button>
         </Grid>
         
         <Grid Grid.Column="1">
@@ -77,20 +80,24 @@
                            FontSize="15"/>
                 </Grid>
             </Popup>
-            <Label Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}" 
-                   Content="Login in ToDoList" HorizontalAlignment="Center" 
-                   Style="{DynamicResource LargeLabelStyle}"/>
-            <Label Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}" 
-                   Content="Registration" HorizontalAlignment="Center" Style="{DynamicResource LargeLabelStyle}"/>
-            
-            <Label Grid.Row="1" Content="Username" Style="{DynamicResource SmallLabelStyle}"/>
-            
-            <TextBox Grid.Row="2" HorizontalContentAlignment="Left" Text="{Binding Username}" 
+            <Viewbox Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}">
+                <Label Content="Login in ToDoList" HorizontalAlignment="Center" Foreground="{StaticResource OPColor}"/>
+            </Viewbox>
+            <Viewbox Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}">
+                <Label Content="Registration" HorizontalAlignment="Center" Foreground="{StaticResource OPColor}"/>
+            </Viewbox>
+            <Viewbox Grid.Row="1" HorizontalAlignment="Left">
+                <Label Content="Username" Foreground="{StaticResource FGColor}"/>
+            </Viewbox>
+            <TextBox  Grid.Row="2" HorizontalContentAlignment="Left" Text="{Binding Username}" 
                      Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
-            <Label Grid.Row="3" Content="Password" Style="{DynamicResource SmallLabelStyle}"/>
             
-            <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
-
+            <Viewbox Grid.Row="3" HorizontalAlignment="Left">
+                <Label Content="Password" Foreground="{StaticResource FGColor}"/>
+            </Viewbox>
+            
+             <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
+            
             <CheckBox Grid.Row="6" Foreground="{StaticResource FGColor}" Content="Remember me" HorizontalAlignment="Center"
                       HorizontalContentAlignment="Center" IsChecked="{Binding RememberUser}" 
                       Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>

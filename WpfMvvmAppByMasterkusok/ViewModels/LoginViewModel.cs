@@ -88,37 +88,39 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void LoginBtnClicked(object parameter)
         {
-            if (!_dbService.CanBeConnected()) {
-                DisplayDBConnectionErrorPopup();
-                return;
-            }
-
-            GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
+            await Task.Run(async() => 
             {
                 BlockAllControls();
-                User user = null;
-                await Task.Run(async () =>
+                if (!_dbService.CanBeConnected()) {
+                    DisplayDBConnectionErrorPopup();
+                    return;
+                }
+
+                GetPasswordFromPasswordBox((PasswordBox)parameter);
+                if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
                 {
+                    
+                    User user = null;
                     await Task.Delay(1500);
                     if (_dbService.CheckUserExists(_username, _password))
                     {
                         user = GetUserFromDb();
                     }
-
-                });
-
-                if(user != null)
-                {
-                    SaveLoginedUserToConfigIfNeccessary(user);
-                    ChangeCurrentVM(new MainPageViewModel(_navigationStore, user, _configManager));
+                    
+                    if (user != null)
+                    {
+                        SaveLoginedUserToConfigIfNeccessary(user);
+                        ChangeCurrentVM(new MainPageViewModel(_navigationStore, user, _configManager));
+                        return;
+                    }
+                    UnlockAllControls();
+                    DisplayLoginErrorPopup();
                     return;
                 }
-                UnlockAllControls();
                 DisplayLoginErrorPopup();
-                return;
-            }
-            DisplayLoginErrorPopup();
+                UnlockAllControls();
+            });
+
         }
 
         private async void DisplayDBConnectionErrorPopup()

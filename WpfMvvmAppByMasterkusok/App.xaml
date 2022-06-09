@@ -22,7 +22,6 @@
         </Style>
         <!-- Beautiful login Text boxes-->
         <Style TargetType="TextBox" x:Key="LoginTextBox">
-            <Setter Property="FontSize" Value="20"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="TextAlignment" Value="Left"/>
@@ -31,7 +30,6 @@
         </Style>
         <!-- Beautiful login password boxes-->
         <Style TargetType="PasswordBox" x:Key="LoginPasswordBox">
-            <Setter Property="FontSize" Value="20"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="{StaticResource BGColor2}"/>

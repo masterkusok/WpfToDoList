@@ -21,7 +21,12 @@ namespace WpfMvvmAppByMasterkusok.Models
         
         public void AddToDoItem(ToDoItem item)
         {
-            item.Id = _toDoItems.Count + 1;
+            int id = _toDoItems.Count;
+            while(GetToDoItemById(id) != null)
+            {
+                id++;
+            }
+            item.Id = id;
             _toDoItems.Add(item);
         }
 
