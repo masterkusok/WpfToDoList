@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using WpfMvvmAppByMasterkusok.Commands;
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
@@ -27,6 +28,13 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 Close();
             });
+        }
+
+        public async void ShowWithTimer(int milliseconds)
+        {
+            Open();
+            await Task.Delay(milliseconds);
+            Close();
         }
 
         public void Open()

@@ -89,33 +89,48 @@
             <Viewbox Grid.Row="1" HorizontalAlignment="Left">
                 <Label Content="Username" Foreground="{StaticResource FGColor}"/>
             </Viewbox>
-            <TextBox  Grid.Row="2" HorizontalContentAlignment="Left" Text="{Binding Username}" 
-                     Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
             
+            <TextBox HorizontalContentAlignment="Left" Text="{Binding Username}" Grid.Row="2"
+                 Style="{DynamicResource LoginTextBox}" IsEnabled="{Binding ControlsEnabled}"/>
+
             <Viewbox Grid.Row="3" HorizontalAlignment="Left">
                 <Label Content="Password" Foreground="{StaticResource FGColor}"/>
             </Viewbox>
             
-             <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
-            
-            <CheckBox Grid.Row="6" Foreground="{StaticResource FGColor}" Content="Remember me" HorizontalAlignment="Center"
+            <PasswordBox IsEnabled="{Binding ControlsEnabled}" Grid.Row="4" Style="{DynamicResource LoginPasswordBox}" Name="PasswordBox"/>
+
+            <CheckBox Grid.Row="6" HorizontalAlignment="Center"
                       HorizontalContentAlignment="Center" IsChecked="{Binding RememberUser}" 
-                      Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+                      Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}">
+                <Viewbox MinWidth="25" MinHeight="25">
+                    <Label Foreground="{StaticResource FGColor}" Content="Remember me"/>
+                </Viewbox>
+            </CheckBox>
 
-            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7" Content="Login" 
-                    FontSize="20" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7" Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}" 
-                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}"/>
+                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}">
+                <Viewbox>
+                    <Label Content="Login" Foreground="{StaticResource FGColor}"/>
+                </Viewbox>
+            </Button>
 
-            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7" Content="Register" 
-                    FontSize="20" Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="7"  Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=PasswordBox}"
                     IsEnabled="{Binding ControlsEnabled}"
-                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"/>
-            
-            <Button Content="Don't have account? Register!" Style="{DynamicResource ButtonWithoutHoverAndBg}"
-                    VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="8" Foreground="{StaticResource FGColor}"
+                    Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}">
+                <Viewbox>
+                    <Label Content="Register" Foreground="{StaticResource FGColor}"/>
+                </Viewbox>
+            </Button>
+
+            <Button Style="{DynamicResource ButtonWithoutHoverAndBg}"
+                    VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="8"
                     Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}" 
-                    Command="{Binding SwitchRegisterMode}"/>
+                    Command="{Binding SwitchRegisterMode}">
+                <Viewbox MaxWidth="200" MaxHeight="50">
+                    <Label Content="Don't have account? Register!" Foreground="{StaticResource FGColor}"/>
+                </Viewbox>
+            </Button>
         </Grid>
     </Grid>
 </Page>

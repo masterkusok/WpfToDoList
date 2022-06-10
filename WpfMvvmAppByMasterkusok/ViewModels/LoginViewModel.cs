@@ -15,7 +15,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool _controlsEnabled = true;
         private bool _isRegistrationMode = false;
         private bool _rememberUser = false;
+        private bool _canConnectToDB = false;
 
+        private User _loginedUser;
         #region Popups
         private PopupRepresenter _loginErrorPopup;
         private PopupRepresenter _loadingPopup;
@@ -59,6 +61,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _dbService = new SqlService();
             _configManager = configManager;
 
+            _canConnectToDB = _dbService.CanBeConnected();
+
             LoginCommand = new RelayCommand(obj =>
             {
                 LoginBtnClicked(obj);
@@ -88,57 +92,61 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void LoginBtnClicked(object parameter)
         {
-            await Task.Run(async() => 
-            {
-                BlockAllControls();
-                if (!_dbService.CanBeConnected()) {
-                    DisplayDBConnectionErrorPopup();
-                    return;
-                }
+            BlockAllControls();
 
-                GetPasswordFromPasswordBox((PasswordBox)parameter);
-                if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
-                {
-                    
-                    User user = null;
-                    await Task.Delay(1500);
-                    if (_dbService.CheckUserExists(_username, _password))
-                    {
-                        user = GetUserFromDb();
-                    }
-                    
-                    if (user != null)
-                    {
-                        SaveLoginedUserToConfigIfNeccessary(user);
-                        ChangeCurrentVM(new MainPageViewModel(_navigationStore, user, _configManager));
-                        return;
-                    }
-                    UnlockAllControls();
-                    DisplayLoginErrorPopup();
-                    return;
-                }
-                DisplayLoginErrorPopup();
-                UnlockAllControls();
+            // This delay allows user to enjoy beautiful loader animation UwU
+            await Task.Delay(1500);
+
+            await Task.Run(() => {
+                _canConnectToDB = _dbService.CanBeConnected();
             });
 
-        }
+            if (!_canConnectToDB)
+            {
+                _dbConnectionErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
+                return;
+            }
 
-        private async void DisplayDBConnectionErrorPopup()
-        {
-            _dbConnectionErrorPopup.Open();
-            await Task.Delay(6500);
-            _dbConnectionErrorPopup.Close();
-        }
+            GetPasswordFromPasswordBox((PasswordBox)parameter);
+            if (CheckIfUsernameAndPasswordAreValid())
+            {
+                _loginErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
+                return;
+            }
 
-        private void SaveLoginedUserToConfigIfNeccessary(User user)
+            await Task.Run(() =>
+            {
+                if (!_dbService.CheckUserExists(_username, _password))
+                {
+                    _loginErrorPopup.ShowWithTimer(5000);
+                    UnlockAllControls();
+                    return;
+                }
+                _loginedUser = _dbService.GetUser(_username, _password);
+            });
+
+            if(_loginedUser == null)
+            {
+                _loginErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
+                return;
+            }
+
+            SaveLoginedUserToConfigIfNeccessary();
+            ChangeCurrentVM(new MainPageViewModel(_navigationStore, _loginedUser, _configManager));
+            UnlockAllControls();
+        }
+        
+        private void SaveLoginedUserToConfigIfNeccessary()
         {
             if (_rememberUser)
             {
-                _configManager.Config.LoginedUser = user;
+                _configManager.Config.LoginedUser = _loginedUser;
                 _configManager.SaveConfiguration();
             }
         }
-
 
         private void GetPasswordFromPasswordBox(PasswordBox box)
         {
@@ -159,63 +167,55 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
-        private User GetUserFromDb()
+        private bool CheckIfUsernameAndPasswordAreValid()
         {
-            return _dbService.GetUser(_username, _password);
-        }
-
-
-        private async void DisplayLoginErrorPopup()
-        {
-            _loginErrorPopup.Open();
-            await Task.Delay(6500);
-            _loginErrorPopup.Close();
+            return string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password);
         }
 
         private async void TryToRegister(object parameter)
         {
-            GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password))
+            BlockAllControls();
+
+            await Task.Run(() => {
+                // This delay allows user to enjoy beautiful loader animation UwU
+                Task.Delay(1500);
+                _canConnectToDB = _dbService.CanBeConnected();
+            });
+
+            if (!_canConnectToDB)
             {
-                bool completedSuccessfully = false;
-                BlockAllControls();
-                await Task.Run(async () =>
-                {
-                    await Task.Delay(1500);
-                    if (_dbService.AddUser(_username, _password))
-                    {
-                        completedSuccessfully = true;
-                    }
-                });
-                DisplayOneOfRegisterPopups(completedSuccessfully);
-                UnlockAllControls();   
-            }
-            DisplayOneOfRegisterPopups(false);
-        }
-        
-        private void DisplayOneOfRegisterPopups(bool completedSuccessfully)
-        {
-            if (completedSuccessfully)
-            {
-                DisplayRegisterSuccessPopupAndRedirect();
+                _dbConnectionErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
                 return;
             }
-            DisplayRegisterErrorPopup();
-        }
 
-        private async void DisplayRegisterSuccessPopupAndRedirect()
+            GetPasswordFromPasswordBox((PasswordBox)parameter);
+            if (CheckIfUsernameAndPasswordAreValid())
+            {
+                _registerErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
+                return;
+            }
+
+            await Task.Run(() =>
+            {
+                if (_dbService.AddUser(_username, _password))
+                {
+                    DisplayRegisterSuccessPopupAndRedirect();
+                    UnlockAllControls();
+                    return;
+                }
+                _registerErrorPopup.ShowWithTimer(5000);
+                UnlockAllControls();
+            });
+          
+        }
+        
+        private void DisplayRegisterSuccessPopupAndRedirect()
         {
-            _registerSuccessPopup.Open();
-            await Task.Delay(5000);
-            _registerSuccessPopup.Close();
+            _registerSuccessPopup.ShowWithTimer(5000);
             ChangeCurrentVM(new LoginViewModel(_navigationStore, _configManager));
         }
 
-        private async void DisplayRegisterErrorPopup()
-        {
-            _registerErrorPopup.Open();
-            await Task.Delay(6500);
-            _registerErrorPopup.Close();
-        }
     }
 }
