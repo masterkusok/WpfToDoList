@@ -37,7 +37,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         public ToDoItem GetToDoItemById(int id)
         {
-            ToDoItem foundItem = null;
+            ToDoItem foundItem = null!;
             foreach(ToDoItem item in _toDoItems)
             {
                 if(item.Id == id)
@@ -46,7 +46,7 @@ namespace WpfMvvmAppByMasterkusok.Models
                     break;
                 }
             }
-            return foundItem;
+            return foundItem!;
         }
 
     }

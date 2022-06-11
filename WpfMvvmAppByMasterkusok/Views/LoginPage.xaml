@@ -43,21 +43,10 @@
             </Grid.RowDefinitions>
             
             <!-- This popup is being opened while model is performing request to database -->
-            <Popup Placement="Center" IsOpen="{Binding LoadingPopup.IsOpened}" 
-                   Style="{DynamicResource FadingAndTransparentPopup}" Width="380" Height="210">
-                <Border Background="{StaticResource HTBGColor2}" CornerRadius="20">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="1*"/>
-                            <RowDefinition Height="1*"/>
-                        </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
-                                   VerticalContentAlignment="Center" Content="Wait a second..."/>
-                        <Image Style="{DynamicResource SpinningImage}"  HorizontalAlignment="Center"
-                               Grid.Row="1" Source="/WpfMvvmAppByMasterkusok;component/Images/loader_white.png"/>
-                    </Grid>
-                </Border>
+            <Popup IsOpen="{Binding LoadingPopup.IsOpened}" Style="{DynamicResource LoaderPopup}">
+                <ContentControl/>
             </Popup>
+            
             <!-- This popup appears if app cant connect to database-->
             <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding DBConnectionErrorPopup.IsOpened}">
                 <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error during connecting to server"/>

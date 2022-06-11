@@ -34,10 +34,32 @@
                     FontSize="20" Command="{Binding LogoutCommand}"/>
         </Grid>
 
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding ConnectingToDbErrorPopup.IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error. Can't connect to server"/>
+        </Popup>
+
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding NotEqualFieldsErrorPopup.IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Fields value do not match"/>
+        </Popup>
+
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding EmptyFieldsErrorPopup.IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Fields are empty"/>
+        </Popup>
+
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding OperationSuccessfullyPopup.IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Operation processed succesfully!"
+                            Background="#20a849"/>
+        </Popup>
+
+        <Popup Style="{DynamicResource LoaderPopup}" IsOpen="{Binding LoaderPopup.IsOpened}">
+            <ContentControl/>
+        </Popup>
+
         <Popup Style="{DynamicResource FadingAndTransparentPopup}" IsOpen="{Binding ChangeUsernamePopup.IsOpened}"
                Placement="Center" Width="500" Height="300">
             <Grid Background="{StaticResource BGColor1}">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="2*"/>
@@ -45,14 +67,17 @@
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-                <Label Content="New Username" Style="{DynamicResource SmallLabelStyle}" Grid.Row="1"/>
-                <TextBox Style="{DynamicResource LoginTextBox}" Grid.Row="2" Margin="5, 0, 5, 0"
-                         Text="{Binding NewUsername}"/>
-                <Label Content="Repeat new username" Style="{DynamicResource SmallLabelStyle}" Grid.Row="3"/>
-                <TextBox Style="{DynamicResource LoginTextBox}" Grid.Row="4" Margin="5, 0, 5, 0"
-                         Text="{Binding NewUsernameRepeat}"/>
-                <Button Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="5"
-                        Command="{Binding ChangeUsernameCommand}"/>
+                <Button Style="{DynamicResource ButtonWithoutHoverAndBg}"  HorizontalAlignment="Right" Margin="0, 0, 5, 0"
+                        Content="X" Foreground="{StaticResource FGColor}"
+                        Command="{Binding ChangeUsernamePopup.CloseCommand}"/>
+                <Label Content="New Username" Style="{DynamicResource SmallLabelStyle}" Grid.Row="2"/>
+                <TextBox Style="{DynamicResource LoginTextBox}" Grid.Row="3" Margin="5, 0, 5, 0"
+                         Text="{Binding NewUsername}" IsEnabled="{Binding ControlsEnabled}"/>
+                <Label Content="Repeat new username" Style="{DynamicResource SmallLabelStyle}" Grid.Row="4"/>
+                <TextBox Style="{DynamicResource LoginTextBox}" Grid.Row="5" Margin="5, 0, 5, 0"
+                         Text="{Binding NewUsernameRepeat}" IsEnabled="{Binding ControlsEnabled}"/>
+                <Button Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6"
+                        Command="{Binding ChangeUsernameCommand}" IsEnabled="{Binding ControlsEnabled}"/>
 
             </Grid>
         </Popup>

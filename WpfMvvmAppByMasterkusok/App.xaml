@@ -198,5 +198,34 @@
                 </Style>
             </Style.Resources>
         </Style>
+        <Style TargetType="Popup" x:Key="LoaderPopup">
+            <Setter Property="Placement" Value="Center"/>
+            <Setter Property="PopupAnimation" Value="Fade"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="Width" Value="380"/>
+            <Setter Property="Height" Value="210"/>
+            <Style.Resources>
+                <Style TargetType="ContentControl">
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Border Background="{StaticResource HTBGColor2}" CornerRadius="20">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
+                                            VerticalContentAlignment="Center" Content="Wait a second..."/>
+                                        <Image Style="{DynamicResource SpinningImage}"  HorizontalAlignment="Center"
+                                            Grid.Row="1" Source="/WpfMvvmAppByMasterkusok;component/Images/loader_white.png"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Style.Resources>
+        </Style>
     </Application.Resources>
 </Application>

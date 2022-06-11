@@ -9,15 +9,15 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class LoginViewModel : BaseViewModel
     {
-        private string _password;
-        private string _username;
+        private string _password ="";
+        private string _username ="";
 
         private bool _controlsEnabled = true;
         private bool _isRegistrationMode = false;
         private bool _rememberUser = false;
         private bool _canConnectToDB = false;
 
-        private User _loginedUser;
+        private User _loginedUser = null!;
         #region Popups
         private PopupRepresenter _loginErrorPopup;
         private PopupRepresenter _loadingPopup;
