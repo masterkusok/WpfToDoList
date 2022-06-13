@@ -3,23 +3,27 @@ using WpfMvvmAppByMasterkusok.Models;
 using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.Commands;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class AccountSettingsViewModel : BaseViewModel
     {
+        private const int ErrorPopupTimer = 5000;
         private User _user;
         private IConfigManager _configManager;
         public User CurrentUser { get => _user; set => _user = value; }
 
-        public PopupRepresenter ConnectingToDbErrorPopup { get; set; }
-        public PopupRepresenter EmptyFieldsErrorPopup { get; set; }
+        public Dictionary<string, PopupRepresenter> PagePopups { get; set; }
+        
         public PopupRepresenter OperationSuccessfullyPopup { get; set; }
-        public PopupRepresenter NotEqualFieldsErrorPopup { get; set; }
         public PopupRepresenter ChangePasswordPopup { get; set; }
         public PopupRepresenter ChangeUsernamePopup { get; set; }
+        public PopupRepresenter ErrorPopup { get; set; }
         public PopupRepresenter LoaderPopup { get; set; }
-
+        private string _showingPopupText ="";
+        public string ShowingPopupText { get; set; }
         public string NewUsername { get; set; }
         public string NewUsernameRepeat { get; set; }
         public bool ControlsEnabled { get; set; }
@@ -35,19 +39,23 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _configManager = manager;
             ControlsEnabled = true;
             _dbService = new SqlService();
+            ShowingPopupText = "";
             SetupPopups();
             SetupCommands();
         }
 
         private void SetupPopups()
         {
+            PagePopups = new Dictionary<string, PopupRepresenter>();
+            PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("LoaderPopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("OperationSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
+
+            ErrorPopup = new PopupRepresenter(nameof(ErrorPopup), this);
             ChangePasswordPopup = new PopupRepresenter(nameof(ChangePasswordPopup), this);
             ChangeUsernamePopup = new PopupRepresenter(nameof(ChangeUsernamePopup), this);
-            ConnectingToDbErrorPopup = new PopupRepresenter(nameof(ConnectingToDbErrorPopup), this);
-            EmptyFieldsErrorPopup = new PopupRepresenter(nameof(EmptyFieldsErrorPopup), this);
-            OperationSuccessfullyPopup = new PopupRepresenter(nameof(OperationSuccessfullyPopup), this);
-            NotEqualFieldsErrorPopup = new PopupRepresenter(nameof(NotEqualFieldsErrorPopup), this);
             LoaderPopup = new PopupRepresenter(nameof(LoaderPopup), this);
+            OperationSuccessfullyPopup = new PopupRepresenter(nameof(OperationSuccessfullyPopup), this);
         }
 
         private void SetupCommands()
@@ -69,7 +77,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void SetNullUserToConfig()
         {
-            _configManager.Config.LoginedUser = null;
+            _configManager.Config.LoginedUser = null!;
             _configManager.SaveConfiguration();
         }
 
@@ -82,7 +90,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 if (!_dbService.CanBeConnected())
                 {
                     EnableControlsAndCloseLoaderPopup();
-                    ConnectingToDbErrorPopup.ShowWithTimer(5000);
+                    ShowErrorPopup("Error during conecting to server");
                     return;
                 }
             });
@@ -90,33 +98,40 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if(string.IsNullOrEmpty(NewUsername) || string.IsNullOrEmpty(NewUsernameRepeat))
             {
                 EnableControlsAndCloseLoaderPopup();
-                EmptyFieldsErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopup("Error. You should fill both fields");
                 return;
             }
 
             if (NewUsername != NewUsernameRepeat)
             {
                 EnableControlsAndCloseLoaderPopup();
-                NotEqualFieldsErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopup("Error. Fields do not match");
                 return;
             }
             ChangeUsernameInDbAndConfig();
             EnableControlsAndCloseLoaderPopup();
-            OperationSuccessfullyPopup.ShowWithTimer(2000);
+            ShowOperationSuccessfullyPopup();
+        }
+
+        private void ShowErrorPopup(string message)
+        {
+            ShowingPopupText = message;
+            NotifyOnPropertyChanged(nameof(ShowingPopupText));
+            PagePopups["ErrorPopup"].ShowWithTimer(ErrorPopupTimer);
         }
 
         private void DisableControlsAndShowLoaderPopup()
         {
             ControlsEnabled = false;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            LoaderPopup.Open();
+            PagePopups["LoaderPopup"].Open();
         }
 
         private void EnableControlsAndCloseLoaderPopup()
         {
             ControlsEnabled = true;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            LoaderPopup.Close();
+            PagePopups["LoaderPopup"].Close();
         }
 
         private void ChangeUsernameInDbAndConfig()
@@ -127,6 +142,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _configManager.SaveConfiguration();
             _dbService.UpdateUser(oldUser, _user);
             NotifyOnPropertyChanged(nameof(CurrentUser));
+        }
+
+        private void ShowOperationSuccessfullyPopup()
+        {
+            // Close error popup to avoid display bugs
+            PagePopups["ErrorPopup"].Close();
+
+            ShowingPopupText = "Operation executed successfully!";
+            NotifyOnPropertyChanged(nameof(ShowingPopupText));
+            PagePopups["OperationSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
         }
     }
 }

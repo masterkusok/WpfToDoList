@@ -3,7 +3,7 @@ using System.Windows.Input;
 using WpfMvvmAppByMasterkusok.Commands;
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
-    internal class PopupRepresenter
+    public class PopupRepresenter
     {
         private BaseViewModel _invokingVm;
         private bool _isOpened;
@@ -13,11 +13,11 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         public ICommand OpenCommand { get; set; }
         public ICommand CloseCommand { get; set; }
 
-        public PopupRepresenter(string popupName, BaseViewModel invokingVm)
+        public PopupRepresenter(string notifyingPropertyName, BaseViewModel invokingVm)
         {
             _isOpened = false;
             _invokingVm = invokingVm;
-            _name = popupName;
+            _name = notifyingPropertyName;
 
             OpenCommand = new RelayCommand(obj =>
             {

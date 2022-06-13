@@ -155,6 +155,7 @@
         </Style>
 
         <Style TargetType="ContentControl" x:Key="ErrorPopupContent">
+            <Setter Property="Background" Value="#bf2a2a"/>
             <Setter Property="ContentTemplate">
                 <Setter.Value>
                     <DataTemplate>

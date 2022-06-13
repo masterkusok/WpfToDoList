@@ -34,27 +34,20 @@
                     FontSize="20" Command="{Binding LogoutCommand}"/>
         </Grid>
 
-        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding ConnectingToDbErrorPopup.IsOpened}">
-            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error. Can't connect to server"/>
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding Path=PagePopups[ErrorPopup].IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="{Binding ShowingPopupText}"/>
         </Popup>
 
-        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding NotEqualFieldsErrorPopup.IsOpened}">
-            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Fields value do not match"/>
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding Path=PagePopups[OperationSuccessfullyPopup].IsOpened}">
+            <ContentControl Background="#20a849" Style="{DynamicResource ErrorPopupContent}" 
+                            Content="{Binding ShowingPopupText}"/>
         </Popup>
 
-        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding EmptyFieldsErrorPopup.IsOpened}">
-            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Fields are empty"/>
-        </Popup>
-
-        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding OperationSuccessfullyPopup.IsOpened}">
-            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Operation processed succesfully!"
-                            Background="#20a849"/>
-        </Popup>
-
-        <Popup Style="{DynamicResource LoaderPopup}" IsOpen="{Binding LoaderPopup.IsOpened}">
+        <Popup Style="{DynamicResource LoaderPopup}" IsOpen="{Binding Path=PagePopups[LoaderPopup].IsOpened}">
             <ContentControl/>
         </Popup>
 
+        <!-- Username changing popup-->
         <Popup Style="{DynamicResource FadingAndTransparentPopup}" IsOpen="{Binding ChangeUsernamePopup.IsOpened}"
                Placement="Center" Width="500" Height="300">
             <Grid Background="{StaticResource BGColor1}">
@@ -78,8 +71,8 @@
                          Text="{Binding NewUsernameRepeat}" IsEnabled="{Binding ControlsEnabled}"/>
                 <Button Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6"
                         Command="{Binding ChangeUsernameCommand}" IsEnabled="{Binding ControlsEnabled}"/>
-
             </Grid>
         </Popup>
+        <!-- Password changing popup-->
     </Grid>
 </Page>
