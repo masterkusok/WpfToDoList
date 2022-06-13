@@ -4,11 +4,14 @@ using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.Models;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
     internal class LoginViewModel : BaseViewModel
     {
+        private const int ErrorPopupTimer = 5000;
+
         private string _password ="";
         private string _username ="";
 
@@ -18,22 +21,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool _canConnectToDB = false;
 
         private User _loginedUser = null!;
-        #region Popups
-        private PopupRepresenter _loginErrorPopup;
-        private PopupRepresenter _loadingPopup;
-        private PopupRepresenter _registerPopup;
-        private PopupRepresenter _registerSuccessPopup;
-        private PopupRepresenter _registerErrorPopup;
-        private PopupRepresenter _dbConnectionErrorPopup;
 
-        public PopupRepresenter LoadingPopup { get => _loadingPopup; set => _loadingPopup = value; }
-        public PopupRepresenter RegisterPopup { get => _registerPopup; set => _registerPopup = value; }
-        public PopupRepresenter RegisterSuccessPopup { get => _registerSuccessPopup; set => _registerSuccessPopup = value; }
-        public PopupRepresenter RegisterErrorPopup { get => _registerErrorPopup; set => _registerErrorPopup = value; }
-        public PopupRepresenter LoginErrorPopup { get => _loginErrorPopup; set => _loginErrorPopup = value;}
-        public PopupRepresenter DBConnectionErrorPopup { get => _dbConnectionErrorPopup;
-            set => _dbConnectionErrorPopup = value; }
-        #endregion
+        public Dictionary<string, PopupRepresenter> PagePopups { get; set; }
+        public string ErrorPopupMessage { get; set; }
 
         public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
@@ -50,13 +40,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         public LoginViewModel(NavigationStore navigationStore, IConfigManager configManager)
         {
-            _loadingPopup = new PopupRepresenter(nameof(LoadingPopup), this);
-            _registerSuccessPopup = new PopupRepresenter(nameof(RegisterSuccessPopup), this);
-            _registerErrorPopup = new PopupRepresenter(nameof(RegisterErrorPopup), this);
-            _registerPopup = new PopupRepresenter(nameof(RegisterPopup), this);
-            _loginErrorPopup = new PopupRepresenter(nameof(LoginErrorPopup), this);
-            _dbConnectionErrorPopup = new PopupRepresenter(nameof(DBConnectionErrorPopup), this);
-
+            SetupPopups();
+           
             _navigationStore = navigationStore;
             _dbService = new SqlService();
             _configManager = configManager;
@@ -75,6 +60,14 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 TryToRegister(obj);
             });
+        }
+
+        private void SetupPopups()
+        {
+            PagePopups = new Dictionary<string, PopupRepresenter>();
+            PagePopups.Add("LoaderPopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("RegisterSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
         }
 
         private void SwitchRegisterModeClicked()
@@ -103,7 +96,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             if (!_canConnectToDB)
             {
-                _dbConnectionErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Error during connecting to server");
                 UnlockAllControls();
                 return;
             }
@@ -111,7 +104,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             GetPasswordFromPasswordBox((PasswordBox)parameter);
             if (CheckIfUsernameAndPasswordAreValid())
             {
-                _loginErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Invalid username or password");
                 UnlockAllControls();
                 return;
             }
@@ -120,7 +113,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 if (!_dbService.CheckUserExists(_username, _password))
                 {
-                    _loginErrorPopup.ShowWithTimer(5000);
+                    ShowErrorPopupMessage("Can't find such user");
                     UnlockAllControls();
                     return;
                 }
@@ -129,7 +122,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             if(_loginedUser == null)
             {
-                _loginErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Can't find such user");
                 UnlockAllControls();
                 return;
             }
@@ -156,14 +149,21 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private void BlockAllControls()
         {
             _controlsEnabled = false;
-            _loadingPopup.Open();
+            PagePopups["LoaderPopup"].Open();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
+        }
+
+        private void ShowErrorPopupMessage(string message)
+        {
+            ErrorPopupMessage = message;
+            NotifyOnPropertyChanged(nameof(ErrorPopupMessage));
+            PagePopups["ErrorPopup"].ShowWithTimer(ErrorPopupTimer);
         }
 
         private void UnlockAllControls()
         {
             _controlsEnabled = true;
-            _loadingPopup.Close();
+            PagePopups["LoaderPopup"].Close();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
@@ -176,15 +176,14 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             BlockAllControls();
 
+            await Task.Delay(1500);
             await Task.Run(() => {
-                // This delay allows user to enjoy beautiful loader animation UwU
-                Task.Delay(1500);
                 _canConnectToDB = _dbService.CanBeConnected();
             });
 
             if (!_canConnectToDB)
             {
-                _dbConnectionErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Error during connecting");
                 UnlockAllControls();
                 return;
             }
@@ -192,7 +191,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             GetPasswordFromPasswordBox((PasswordBox)parameter);
             if (CheckIfUsernameAndPasswordAreValid())
             {
-                _registerErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Invalid username or password");
                 UnlockAllControls();
                 return;
             }
@@ -205,15 +204,16 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                     UnlockAllControls();
                     return;
                 }
-                _registerErrorPopup.ShowWithTimer(5000);
+                ShowErrorPopupMessage("Error. Please, try againg later");
                 UnlockAllControls();
             });
           
         }
         
-        private void DisplayRegisterSuccessPopupAndRedirect()
+        private async void DisplayRegisterSuccessPopupAndRedirect()
         {
-            _registerSuccessPopup.ShowWithTimer(5000);
+            PagePopups["RegisterSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
+            await Task.Delay(ErrorPopupTimer);
             ChangeCurrentVM(new LoginViewModel(_navigationStore, _configManager));
         }
 

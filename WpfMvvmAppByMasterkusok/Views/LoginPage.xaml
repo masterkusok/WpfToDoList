@@ -43,32 +43,26 @@
             </Grid.RowDefinitions>
             
             <!-- This popup is being opened while model is performing request to database -->
-            <Popup IsOpen="{Binding LoadingPopup.IsOpened}" Style="{DynamicResource LoaderPopup}">
+            <Popup IsOpen="{Binding Path=PagePopups[LoaderPopup].IsOpened}" Style="{DynamicResource LoaderPopup}">
                 <ContentControl/>
             </Popup>
+
+            <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding Path=PagePopups[ErrorPopup].IsOpened}">
+                <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="{Binding ErrorPopupMessage}"/>
+            </Popup>
             
-            <!-- This popup appears if app cant connect to database-->
-            <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding DBConnectionErrorPopup.IsOpened}">
-                <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error during connecting to server"/>
-            </Popup>
-            <!-- This popup is being opened if db can't find such user-->
-            <Popup IsOpen="{Binding LoginErrorPopup.IsOpened}" Style="{DynamicResource ErrorPopup}">
-                <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error. Such user does not exist"/>
-            </Popup>
-            <!-- This popup appears if user is trying to register with already existing username-->
-            <Popup IsOpen="{Binding RegisterErrorPopup.IsOpened}" Style="{DynamicResource ErrorPopup}">
-                <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="Error. Username was already taken"/>
-            </Popup>
             <!-- This popup appears if registration is done successfully-->
             <Popup Placement="Center" 
                    Width="370" Height="200"
-                   IsOpen="{Binding RegisterSuccessPopup.IsOpened}" Style="{DynamicResource FadingAndTransparentPopup}">
+                   IsOpen="{Binding Path=PagePopups[RegisterSuccessfullyPopup].IsOpened}" 
+                   Style="{DynamicResource FadingAndTransparentPopup}">
                 <Grid Background="#20a849">
                     <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
                                VerticalContentAlignment="Center" Content="Registration was done successfully!&#10;After 5 seconds you will be redirected to login page!"
                            FontSize="15"/>
                 </Grid>
             </Popup>
+            
             <Viewbox Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}">
                 <Label Content="Login in ToDoList" HorizontalAlignment="Center" Foreground="{StaticResource OPColor}"/>
             </Viewbox>
