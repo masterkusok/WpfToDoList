@@ -91,21 +91,6 @@ namespace WpfMvvmAppByMasterkusok.Models
             return exists;
         }
 
-        public User GetUser(string username, string password)
-        {
-            OpenConnectionIfNotOpened();
-            int i = 5;
-            if (CheckUserExists(username, password))
-            {
-                MySqlCommand command = CreateSelectConcreteUserCommand(username, password);
-                User user = TryToReadUsersData(command);
-                _connection.Close();
-                return user;
-            }
-
-            throw new NullReferenceException();
-        }
-
         private MySqlCommand CreateSelectConcreteUserCommand(string username, string password)
         {
             return new MySqlCommand($"SELECT * FROM users WHERE username = '{username}'" +
@@ -119,6 +104,21 @@ namespace WpfMvvmAppByMasterkusok.Models
                 return "";
             }
             return $"AND password = '{password}'";
+        }
+
+        public User GetUser(string username, string password)
+        {
+            OpenConnectionIfNotOpened();
+            int i = 5;
+            if (CheckUserExists(username, password))
+            {
+                MySqlCommand command = CreateSelectConcreteUserCommand(username, password);
+                User user = TryToReadUsersData(command);
+                _connection.Close();
+                return user;
+            }
+
+            throw new NullReferenceException();
         }
 
         private User TryToReadUsersData(MySqlCommand command)

@@ -52,17 +52,11 @@
             </Popup>
             
             <!-- This popup appears if registration is done successfully-->
-            <Popup Placement="Center" 
-                   Width="370" Height="200"
-                   IsOpen="{Binding Path=PagePopups[RegisterSuccessfullyPopup].IsOpened}" 
-                   Style="{DynamicResource FadingAndTransparentPopup}">
-                <Grid Background="#20a849">
-                    <Label Grid.Row="0" Style="{DynamicResource SmallLabelStyle}" HorizontalContentAlignment="Center" 
-                               VerticalContentAlignment="Center" Content="Registration was done successfully!&#10;After 5 seconds you will be redirected to login page!"
-                           FontSize="15"/>
-                </Grid>
+            <Popup Style="{DynamicResource OperationSuccessfullyPopup}" 
+                   IsOpen="{Binding Path=PagePopups[RegisterSuccessfullyPopup].IsOpened}">
+                <ContentControl Content="Registration was done successfully!&#10;After 5 seconds you will be redirected&#10;to login page!"/>
             </Popup>
-            
+
             <Viewbox Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Inverted}">
                 <Label Content="Login in ToDoList" HorizontalAlignment="Center" Foreground="{StaticResource OPColor}"/>
             </Viewbox>

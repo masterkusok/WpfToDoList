@@ -27,9 +27,9 @@
             <Label Content="{Binding CurrentUser.Username}" HorizontalAlignment="Center" 
                    Style="{DynamicResource LargeLabelStyle}" Foreground="{StaticResource FGColor}" Grid.Row="1"/>
             <Button Content="Change username" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="2"
-                    FontSize="20" Command="{Binding ChangeUsernamePopup.OpenCommand}"/>
+                    FontSize="20" Command="{Binding Path=PagePopups[ChangeUsernamePopup].OpenCommand}"/>
             <Button Content="Change password" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="3"
-                    FontSize="20" Command="{Binding ChangePasswordPopup.OpenCommand}"/>
+                    FontSize="20" Command="{Binding Path=PagePopups[ChangePasswordPopup].OpenCommand}"/>
             <Button Content="Log Out" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="4"
                     FontSize="20" Command="{Binding LogoutCommand}"/>
         </Grid>
@@ -38,17 +38,18 @@
             <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="{Binding ShowingPopupText}"/>
         </Popup>
 
-        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding Path=PagePopups[OperationSuccessfullyPopup].IsOpened}">
-            <ContentControl Background="#20a849" Style="{DynamicResource ErrorPopupContent}" 
-                            Content="{Binding ShowingPopupText}"/>
-        </Popup>
-
         <Popup Style="{DynamicResource LoaderPopup}" IsOpen="{Binding Path=PagePopups[LoaderPopup].IsOpened}">
             <ContentControl/>
         </Popup>
 
+        <Popup Style="{DynamicResource OperationSuccessfullyPopup}" 
+               IsOpen="{Binding Path=PagePopups[OperationSuccessfullyPopup].IsOpened}">
+            <ContentControl Content="Operation went successfully!&#10;You can continue working after 5 seconds"/>
+        </Popup>
+
         <!-- Username changing popup-->
-        <Popup Style="{DynamicResource FadingAndTransparentPopup}" IsOpen="{Binding ChangeUsernamePopup.IsOpened}"
+        <Popup Style="{DynamicResource FadingAndTransparentPopup}" 
+               IsOpen="{Binding Path=PagePopups[ChangeUsernamePopup].IsOpened}"
                Placement="Center" Width="500" Height="300">
             <Grid Background="{StaticResource BGColor1}">
                 <Grid.RowDefinitions>
@@ -62,7 +63,7 @@
                 </Grid.RowDefinitions>
                 <Button Style="{DynamicResource ButtonWithoutHoverAndBg}"  HorizontalAlignment="Right" Margin="0, 0, 5, 0"
                         Content="X" Foreground="{StaticResource FGColor}"
-                        Command="{Binding ChangeUsernamePopup.CloseCommand}"/>
+                        Command="{Binding Path=PagePopups[ChangeUsernamePopup].CloseCommand}"/>
                 <Label Content="New Username" Style="{DynamicResource SmallLabelStyle}" Grid.Row="2"/>
                 <TextBox Style="{DynamicResource LoginTextBox}" Grid.Row="3" Margin="5, 0, 5, 0"
                          Text="{Binding NewUsername}" IsEnabled="{Binding ControlsEnabled}"/>
@@ -74,5 +75,38 @@
             </Grid>
         </Popup>
         <!-- Password changing popup-->
+        <Popup Style="{DynamicResource FadingAndTransparentPopup}" 
+               IsOpen="{Binding Path=PagePopups[ChangePasswordPopup].IsOpened}"
+               Placement="Center" Width="500" Height="300">
+            <Grid Background="{StaticResource BGColor1}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="3*"/>
+                </Grid.RowDefinitions>
+                <Button Style="{DynamicResource ButtonWithoutHoverAndBg}"  HorizontalAlignment="Right" Margin="0, 0, 5, 0"
+                        Content="X" Foreground="{StaticResource FGColor}"
+                        Command="{Binding Path=PagePopups[ChangePasswordPopup].CloseCommand}"/>
+                <Label Content="New password" Style="{DynamicResource SmallLabelStyle}" Grid.Row="2"/>
+                <PasswordBox Style="{DynamicResource LoginPasswordBox}" Grid.Row="3" Margin="5, 0, 5, 0"
+                          IsEnabled="{Binding ControlsEnabled}" Name="PasswordBox"/>
+                <Label Content="Repeat new password" Style="{DynamicResource SmallLabelStyle}" Grid.Row="4"/>
+                <PasswordBox Style="{DynamicResource LoginPasswordBox}" Grid.Row="5" Margin="5, 0, 5, 0"
+                          IsEnabled="{Binding ControlsEnabled}" Name="PasswordBoxRepeat"/>
+                <Button Content="Apply" Style="{DynamicResource ButtonWithoutHoverAndBg}" Grid.Row="6"
+                        Command="{Binding ChangePasswordCommand}" IsEnabled="{Binding ControlsEnabled}">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{local:PasswordBoxMultipleBindingConverter}">
+                            <Binding ElementName="PasswordBox"/>
+                            <Binding ElementName="PasswordBoxRepeat"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
+            </Grid>
+        </Popup>
     </Grid>
 </Page>

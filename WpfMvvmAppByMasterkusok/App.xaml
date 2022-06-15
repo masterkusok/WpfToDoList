@@ -154,6 +154,30 @@
             <Setter Property="PopupAnimation" Value="Fade"/>
         </Style>
 
+        <Style TargetType="Popup" x:Key="OperationSuccessfullyPopup">
+            <Setter Property="Placement" Value="Center"/>
+            <Setter Property="Width" Value="370"/>
+            <Setter Property="Height" Value="200"/>
+            <Setter Property="PopupAnimation" Value="Fade"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Style.Resources>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Border Background="#20a849">
+                                    <Label HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                           Content="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Style="{DynamicResource SmallLabelStyle}"/>
+
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Style.Resources>
+        </Style>
+        
         <Style TargetType="ContentControl" x:Key="ErrorPopupContent">
             <Setter Property="Background" Value="#bf2a2a"/>
             <Setter Property="ContentTemplate">

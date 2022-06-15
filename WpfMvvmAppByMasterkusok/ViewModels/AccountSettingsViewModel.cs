@@ -4,7 +4,8 @@ using WpfMvvmAppByMasterkusok.Stores;
 using WpfMvvmAppByMasterkusok.Commands;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System;
+using System.Windows.Controls;
 
 namespace WpfMvvmAppByMasterkusok.ViewModels
 {
@@ -13,23 +14,20 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private const int ErrorPopupTimer = 5000;
         private User _user;
         private IConfigManager _configManager;
+        private string _newPassword;
+        private string _newPasswordRepeat;
         public User CurrentUser { get => _user; set => _user = value; }
 
         public Dictionary<string, PopupRepresenter> PagePopups { get; set; }
-        
-        public PopupRepresenter OperationSuccessfullyPopup { get; set; }
-        public PopupRepresenter ChangePasswordPopup { get; set; }
-        public PopupRepresenter ChangeUsernamePopup { get; set; }
-        public PopupRepresenter ErrorPopup { get; set; }
-        public PopupRepresenter LoaderPopup { get; set; }
-        private string _showingPopupText ="";
         public string ShowingPopupText { get; set; }
         public string NewUsername { get; set; }
         public string NewUsernameRepeat { get; set; }
         public bool ControlsEnabled { get; set; }
+        public bool ChangePasswordMode { get; set; }
 
         public ICommand LogoutCommand { get; set; }
         public ICommand ChangeUsernameCommand { get; set; }
+        public ICommand ChangePasswordCommand { get; set; }
         private IDbService _dbService;
 
         public AccountSettingsViewModel(NavigationStore navigationStore, User user, IConfigManager manager)
@@ -48,14 +46,10 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         {
             PagePopups = new Dictionary<string, PopupRepresenter>();
             PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("ChangeUsernamePopup", new PopupRepresenter("PagePopups", this));
+            PagePopups.Add("ChangePasswordPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("LoaderPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("OperationSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
-
-            ErrorPopup = new PopupRepresenter(nameof(ErrorPopup), this);
-            ChangePasswordPopup = new PopupRepresenter(nameof(ChangePasswordPopup), this);
-            ChangeUsernamePopup = new PopupRepresenter(nameof(ChangeUsernamePopup), this);
-            LoaderPopup = new PopupRepresenter(nameof(LoaderPopup), this);
-            OperationSuccessfullyPopup = new PopupRepresenter(nameof(OperationSuccessfullyPopup), this);
         }
 
         private void SetupCommands()
@@ -66,6 +60,10 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             ChangeUsernameCommand = new RelayCommand(obj => {
                 ChangeUsernameButtonPressed();
+            });
+            ChangePasswordCommand = new RelayCommand(obj =>
+            {
+                ChangePasswordButtonPressed(obj);
             });
         }
 
@@ -95,7 +93,20 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 }
             });
 
-            if(string.IsNullOrEmpty(NewUsername) || string.IsNullOrEmpty(NewUsernameRepeat))
+            bool userExists = true;
+            await Task.Run(() =>
+            {
+                userExists = _dbService.CheckUserExists(NewUsername, null);
+            });
+
+            if (userExists)
+            {
+                EnableControlsAndCloseLoaderPopup();
+                ShowErrorPopup("Error. Username is already taken");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(NewUsername) || string.IsNullOrEmpty(NewUsernameRepeat))
             {
                 EnableControlsAndCloseLoaderPopup();
                 ShowErrorPopup("Error. You should fill both fields");
@@ -108,9 +119,10 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 ShowErrorPopup("Error. Fields do not match");
                 return;
             }
-            ChangeUsernameInDbAndConfig();
-            EnableControlsAndCloseLoaderPopup();
+
+            ChangeUserInDbAndConfig(new User(NewUsername, _user.Password, _user.ToDoItems));
             ShowOperationSuccessfullyPopup();
+            EnableControlsAndCloseLoaderPopup();
         }
 
         private void ShowErrorPopup(string message)
@@ -134,13 +146,15 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups["LoaderPopup"].Close();
         }
 
-        private void ChangeUsernameInDbAndConfig()
+        private void ChangeUserInDbAndConfig(User newVersion)
         {
-            User oldUser = new User(_user.Username, _user.Password, null);
-            _user.Username = NewUsername;
-            _configManager.Config.LoginedUser = _user;
-            _configManager.SaveConfiguration();
-            _dbService.UpdateUser(oldUser, _user);
+            if (_configManager.Config.LoginedUser != null)
+            {
+                _configManager.Config.LoginedUser = newVersion;
+                _configManager.SaveConfiguration();
+            }
+
+            _dbService.UpdateUser(_user, newVersion);
             NotifyOnPropertyChanged(nameof(CurrentUser));
         }
 
@@ -153,5 +167,46 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             NotifyOnPropertyChanged(nameof(ShowingPopupText));
             PagePopups["OperationSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
         }
+    
+        private async void ChangePasswordButtonPressed(object obj)
+        {
+            GetPasswordsFromBoxes(obj);
+            DisableControlsAndShowLoaderPopup();
+            await Task.Delay(1500);
+            await Task.Run(() =>
+            {
+                if (!_dbService.CanBeConnected())
+                {
+                    EnableControlsAndCloseLoaderPopup();
+                    ShowErrorPopup("Error during conecting to server");
+                    return;
+                }
+            });
+
+            if (string.IsNullOrEmpty(_newPassword) || string.IsNullOrEmpty(_newPasswordRepeat))
+            {
+                EnableControlsAndCloseLoaderPopup();
+                ShowErrorPopup("Error. You should fill both fields");
+                return;
+            }
+
+            if (_newPassword != _newPasswordRepeat)
+            {
+                EnableControlsAndCloseLoaderPopup();
+                ShowErrorPopup("Error. Fields do not match");
+                return;
+            }
+            ChangeUserInDbAndConfig(new User(_user.Username, _newPassword, _user.ToDoItems));
+            ShowOperationSuccessfullyPopup();
+            EnableControlsAndCloseLoaderPopup();
+        }
+
+        private void GetPasswordsFromBoxes(object obj)
+        {
+            var values = (object[])obj;
+            _newPassword = (values[0] as PasswordBox).Password;
+            _newPasswordRepeat = (values[1] as PasswordBox).Password;
+        }
+
     }
 }
