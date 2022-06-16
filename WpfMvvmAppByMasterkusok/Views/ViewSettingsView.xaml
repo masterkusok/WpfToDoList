@@ -2,13 +2,84 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok.Views"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ViewSettingsView">
 
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="6*"/>
+            </Grid.RowDefinitions>
+            <Viewbox>
+                <Label Content="View Settings" Style="{DynamicResource LargeLabelStyle}"/>
+            </Viewbox>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="20*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <Viewbox HorizontalAlignment="Left">
+                        <Label Content="Current theme:" Style="{DynamicResource SmallLabelStyle}"/>
+                    </Viewbox>
+                    <ComboBox>
+                        <ComboBoxItem Tag="Dark" Content="Dark"/>
+                        <ComboBoxItem Tag="Light" Content="Light"/>
+                        <ComboBoxItem Tag="Custom" Content="Custom" Name="CustomThemeBoxItem" IsSelected="True"/>
+                    </ComboBox>
+                    <StackPanel Visibility="{Binding ElementName=CustomThemeBoxItem, Path=IsSelected, 
+                        Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}">
+                        <Label Content="Theme preview:" Style="{DynamicResource SmallLabelStyle}"/>
+                        <StackPanel Background="{Binding Path=SelectedColors[BGColor1]}" Margin="30, 30, 30, 30">
+                            <Label Content="Accent color!" Foreground="{Binding Path=SelectedColors[OPColor]}"
+                                   FontWeight="ExtraBold"/>
+                            <StackPanel Background="{Binding Path=SelectedColors[BGColor2]}" Margin="15, 15, 15, 15">
+                                <Label Foreground="{Binding Path=SelectedColors[FGColor]}" Content="Text color!"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Visibility="{Binding ElementName=CustomThemeBoxItem, Path=IsSelected, 
+                        Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="2*"/>
+                        </Grid.RowDefinitions>
+                        <Label Content="Text Color:" Style="{DynamicResource SmallLabelStyle}"/>
+                        <xctk:ColorPicker Grid.Row="1" SelectedColor="{Binding Path=SelectedColors[FGColor].Color}"/>
+                        <Label Content="Background Color 1:" Style="{DynamicResource SmallLabelStyle}" Grid.Row="2"/>
+                        <xctk:ColorPicker Grid.Row="3" SelectedColor="{Binding Path=SelectedColors[BGColor1].Color}"/>
+                        <Label Content="Background Color 2:" Style="{DynamicResource SmallLabelStyle}" Grid.Row="4"/>
+                        <xctk:ColorPicker Grid.Row="5" SelectedColor="{Binding Path=SelectedColors[BGColor2].Color}"/>
+                        <Label Content="Accent Color:" Style="{DynamicResource SmallLabelStyle}" Grid.Row="6"/>
+                        <xctk:ColorPicker Grid.Row="7" SelectedColor="{Binding Path=SelectedColors[OPColor].Color}"/>
+                        <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="Apply" Grid.Row="8"
+                                Margin="0, 10, 0, 0" Command="{Binding ApplyCommand}"/>
+                    </Grid>
+                </StackPanel>
+                
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

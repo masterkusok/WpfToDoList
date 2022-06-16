@@ -12,6 +12,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         IConfigManager _configManager;
         public ICommand GoBackCommand { get; set; }
         public AccountSettingsViewModel CurrentAccountSettingsView { get; set; }
+        public ViewSettingsViewModel CurrentViewSettingsView { get; set; }
 
         public SettingsViewModel(NavigationStore store, IConfigManager configManager, User user)
         {
@@ -20,6 +21,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _navigationStore = store;
 
             CurrentAccountSettingsView = new AccountSettingsViewModel(_navigationStore, _user, _configManager);
+            CurrentViewSettingsView = new ViewSettingsViewModel(_navigationStore, _user, _configManager);
 
             GoBackCommand = new RelayCommand(obj =>
             {

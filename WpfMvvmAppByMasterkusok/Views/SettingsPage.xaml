@@ -31,7 +31,7 @@
                 </Frame>
             </TabItem>
             <TabItem Header="View">
-                
+                <Frame Content="{Binding CurrentViewSettingsView, Converter={local:ViewModelToView}}"/>
             </TabItem>
         </TabControl>
     </Grid>

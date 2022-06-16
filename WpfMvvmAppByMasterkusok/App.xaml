@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:WpfMvvmAppByMasterkusok"
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
-
         <!-- All window style -->
         <Style TargetType="Window" x:Key="WindowStyle">
             <Setter Property="Background" Value="{StaticResource BGColor1}">
