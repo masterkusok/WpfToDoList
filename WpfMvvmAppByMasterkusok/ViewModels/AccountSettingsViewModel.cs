@@ -81,13 +81,15 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private async void ChangeUsernameButtonPressed()
         {
-            DisableControlsAndShowLoaderPopup();
+            DisableControls();
+            PagePopups["LoaderPopup"].Open();
             await Task.Delay(1500);
             await Task.Run(() =>
             {
                 if (!_dbService.CanBeConnected())
                 {
-                    EnableControlsAndCloseLoaderPopup();
+                    EnableControls();
+                    PagePopups["LoaderPopup"].Close();
                     ShowErrorPopup("Error during conecting to server");
                     return;
                 }
@@ -101,28 +103,31 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             if (userExists)
             {
-                EnableControlsAndCloseLoaderPopup();
+                EnableControls();
+                PagePopups["LoaderPopup"].Close();
                 ShowErrorPopup("Error. Username is already taken");
                 return;
             }
 
             if (string.IsNullOrEmpty(NewUsername) || string.IsNullOrEmpty(NewUsernameRepeat))
             {
-                EnableControlsAndCloseLoaderPopup();
+                EnableControls();
+                PagePopups["LoaderPopup"].Close();
                 ShowErrorPopup("Error. You should fill both fields");
                 return;
             }
 
             if (NewUsername != NewUsernameRepeat)
             {
-                EnableControlsAndCloseLoaderPopup();
+                EnableControls();
+                PagePopups["LoaderPopup"].Close();
                 ShowErrorPopup("Error. Fields do not match");
                 return;
             }
 
             ChangeUserInDbAndConfig(new User(NewUsername, _user.Password, _user.ToDoItems));
+            PagePopups["LoaderPopup"].Close();
             ShowOperationSuccessfullyPopup();
-            EnableControlsAndCloseLoaderPopup();
         }
 
         private void ShowErrorPopup(string message)
@@ -132,18 +137,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups["ErrorPopup"].ShowWithTimer(ErrorPopupTimer);
         }
 
-        private void DisableControlsAndShowLoaderPopup()
+        private void DisableControls()
         {
             ControlsEnabled = false;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            PagePopups["LoaderPopup"].Open();
         }
 
-        private void EnableControlsAndCloseLoaderPopup()
+        private void EnableControls()
         {
             ControlsEnabled = true;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
-            PagePopups["LoaderPopup"].Close();
+            
         }
 
         private void ChangeUserInDbAndConfig(User newVersion)
@@ -158,7 +162,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             NotifyOnPropertyChanged(nameof(CurrentUser));
         }
 
-        private void ShowOperationSuccessfullyPopup()
+        private async void ShowOperationSuccessfullyPopup()
         {
             // Close error popup to avoid display bugs
             PagePopups["ErrorPopup"].Close();
@@ -166,18 +170,22 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             ShowingPopupText = "Operation executed successfully!";
             NotifyOnPropertyChanged(nameof(ShowingPopupText));
             PagePopups["OperationSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
+            await Task.Delay(ErrorPopupTimer);
+            EnableControls();
         }
     
         private async void ChangePasswordButtonPressed(object obj)
         {
             GetPasswordsFromBoxes(obj);
-            DisableControlsAndShowLoaderPopup();
+            DisableControls();
+            PagePopups["LoaderPopup"].Open();
             await Task.Delay(1500);
             await Task.Run(() =>
             {
                 if (!_dbService.CanBeConnected())
                 {
-                    EnableControlsAndCloseLoaderPopup();
+                    EnableControls();
+                    PagePopups["LoaderPopup"].Close();
                     ShowErrorPopup("Error during conecting to server");
                     return;
                 }
@@ -185,20 +193,22 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
             if (string.IsNullOrEmpty(_newPassword) || string.IsNullOrEmpty(_newPasswordRepeat))
             {
-                EnableControlsAndCloseLoaderPopup();
+                EnableControls();
+                PagePopups["LoaderPopup"].Close();
                 ShowErrorPopup("Error. You should fill both fields");
                 return;
             }
 
             if (_newPassword != _newPasswordRepeat)
             {
-                EnableControlsAndCloseLoaderPopup();
+                EnableControls();
+                PagePopups["LoaderPopup"].Close();
                 ShowErrorPopup("Error. Fields do not match");
                 return;
             }
             ChangeUserInDbAndConfig(new User(_user.Username, _newPassword, _user.ToDoItems));
+            PagePopups["LoaderPopup"].Close();
             ShowOperationSuccessfullyPopup();
-            EnableControlsAndCloseLoaderPopup();
         }
 
         private void GetPasswordsFromBoxes(object obj)

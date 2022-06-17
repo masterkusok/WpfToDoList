@@ -1,5 +1,4 @@
 ﻿using System;
-using WpfMvvmAppByMasterkusok.Views;
 using WpfMvvmAppByMasterkusok.ViewModels;
 using WpfMvvmAppByMasterkusok.Models;
 
@@ -7,6 +6,7 @@ namespace WpfMvvmAppByMasterkusok.Stores
 {
     public class NavigationStore
     {
+
         private BaseViewModel _currentVM;
         public BaseViewModel CurrentVM
         {
@@ -21,6 +21,7 @@ namespace WpfMvvmAppByMasterkusok.Stores
             CurrentPageChanged?.Invoke();
         }
         public event Action CurrentPageChanged;
+
         public NavigationStore()
         {
             JsonConfigManager jsonConfigManager = new JsonConfigManager();

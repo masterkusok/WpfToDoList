@@ -21,7 +21,7 @@
                 <RowDefinition Height="7*"/>
             </Grid.RowDefinitions>
             <Button Visibility="{Binding RegistrationMode, Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}"
-                    Command="{Binding SwitchRegisterMode}"
+                    Command="{Binding SwitchRegisterMode}" IsEnabled="{Binding ControlsEnabled}"
                     Style="{DynamicResource ButtonWithoutHoverAndBg}">
                 <Viewbox>
                     <Label Content="Go back" Foreground="{StaticResource FGColor}"/>

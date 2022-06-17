@@ -86,6 +86,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private async void LoginBtnClicked(object parameter)
         {
             BlockAllControls();
+            PagePopups["LoaderPopup"].Open();
 
             // This delay allows user to enjoy beautiful loader animation UwU
             await Task.Delay(1500);
@@ -97,6 +98,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (!_canConnectToDB)
             {
                 ShowErrorPopupMessage("Error during connecting to server");
+                PagePopups["LoaderPopup"].Close();
                 UnlockAllControls();
                 return;
             }
@@ -105,6 +107,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (CheckIfUsernameAndPasswordAreValid())
             {
                 ShowErrorPopupMessage("Invalid username or password");
+                PagePopups["LoaderPopup"].Close();
                 UnlockAllControls();
                 return;
             }
@@ -114,6 +117,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
                 if (!_dbService.CheckUserExists(_username, _password))
                 {
                     ShowErrorPopupMessage("Can't find such user");
+                    PagePopups["LoaderPopup"].Close();
                     UnlockAllControls();
                     return;
                 }
@@ -123,13 +127,15 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if(_loginedUser == null)
             {
                 ShowErrorPopupMessage("Can't find such user");
+                PagePopups["LoaderPopup"].Close();
                 UnlockAllControls();
                 return;
             }
 
             SaveLoginedUserToConfigIfNeccessary();
-            ChangeCurrentVM(new MainPageViewModel(_navigationStore, _loginedUser, _configManager));
+            PagePopups["LoaderPopup"].Close();
             UnlockAllControls();
+            ChangeCurrentVM(new MainPageViewModel(_navigationStore, _loginedUser, _configManager));
         }
         
         private void SaveLoginedUserToConfigIfNeccessary()
@@ -149,7 +155,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private void BlockAllControls()
         {
             _controlsEnabled = false;
-            PagePopups["LoaderPopup"].Open();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
@@ -163,7 +168,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private void UnlockAllControls()
         {
             _controlsEnabled = true;
-            PagePopups["LoaderPopup"].Close();
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
@@ -175,6 +179,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private async void TryToRegister(object parameter)
         {
             BlockAllControls();
+            PagePopups["LoaderPopup"].Open();
 
             await Task.Delay(1500);
             await Task.Run(() => {
@@ -184,6 +189,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (!_canConnectToDB)
             {
                 ShowErrorPopupMessage("Error during connecting");
+                PagePopups["LoaderPopup"].Close();
                 UnlockAllControls();
                 return;
             }
@@ -192,16 +198,17 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             if (CheckIfUsernameAndPasswordAreValid())
             {
                 ShowErrorPopupMessage("Invalid username or password");
+                PagePopups["LoaderPopup"].Close();
                 UnlockAllControls();
                 return;
             }
 
             await Task.Run(() =>
             {
+                PagePopups["LoaderPopup"].Close();
                 if (_dbService.AddUser(_username, _password))
                 {
                     DisplayRegisterSuccessPopupAndRedirect();
-                    UnlockAllControls();
                     return;
                 }
                 ShowErrorPopupMessage("Error. Please, try againg later");
@@ -215,6 +222,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups["RegisterSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
             await Task.Delay(ErrorPopupTimer);
             ChangeCurrentVM(new LoginViewModel(_navigationStore, _configManager));
+            UnlockAllControls();
         }
 
     }
