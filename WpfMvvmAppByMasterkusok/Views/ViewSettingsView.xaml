@@ -15,6 +15,11 @@
             <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
+
+        <Popup Style="{DynamicResource ErrorPopup}" IsOpen="{Binding HaveToReloadMessagePopup.IsOpened}">
+            <ContentControl Style="{DynamicResource ErrorPopupContent}" Content="You have to restart &#10; app to apply changes!"/>
+        </Popup>
+
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*"/>
@@ -34,11 +39,14 @@
                     <Viewbox HorizontalAlignment="Left">
                         <Label Content="Current theme:" Style="{DynamicResource SmallLabelStyle}"/>
                     </Viewbox>
-                    <ComboBox>
+                    <ComboBox SelectedValue="{Binding SelectedThemeTag}"
+                              SelectedValuePath="Tag">
                         <ComboBoxItem Tag="Dark" Content="Dark"/>
                         <ComboBoxItem Tag="Light" Content="Light"/>
                         <ComboBoxItem Tag="Custom" Content="Custom" Name="CustomThemeBoxItem" IsSelected="True"/>
                     </ComboBox>
+                    <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="Apply"
+                                Margin="0, 10, 0, 0" Command="{Binding ApplyCommand}"/>
                     <StackPanel Visibility="{Binding ElementName=CustomThemeBoxItem, Path=IsSelected, 
                         Converter={local:BoolToVisMarkup}, ConverterParameter=Normal}">
                         <Label Content="Theme preview:" Style="{DynamicResource SmallLabelStyle}"/>
@@ -74,8 +82,6 @@
                         <xctk:ColorPicker Grid.Row="5" SelectedColor="{Binding Path=SelectedColors[BGColor2].Color}"/>
                         <Label Content="Accent Color:" Style="{DynamicResource SmallLabelStyle}" Grid.Row="6"/>
                         <xctk:ColorPicker Grid.Row="7" SelectedColor="{Binding Path=SelectedColors[OPColor].Color}"/>
-                        <Button Style="{DynamicResource ButtonWithoutHoverAndBg}" Content="Apply" Grid.Row="8"
-                                Margin="0, 10, 0, 0" Command="{Binding ApplyCommand}"/>
                     </Grid>
                 </StackPanel>
                 

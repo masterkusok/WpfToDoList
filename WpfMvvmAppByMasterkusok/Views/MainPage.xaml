@@ -52,7 +52,7 @@
         <!-- Popup, which process adding ToDoItems to list -->
         <Popup Placement="Center" IsOpen="{Binding AddToDoItemPopup.IsOpened}" Style="{DynamicResource FadingAndTransparentPopup}"
                Width="500" Height="350">
-            <Grid Background="#1f1f1f">
+            <Grid Background="{StaticResource BGColor1}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="6*"/>
@@ -63,7 +63,7 @@
                         Command="{Binding AddToDoItemPopup.CloseCommand}"/>
                 <TextBox Text="{Binding NewToDoItemText, Mode=TwoWay}" Grid.Row="1" Style="{DynamicResource LoginTextBox}" 
                          FontSize="15" TextWrapping="Wrap"/>
-                <CheckBox Grid.Row="2" Content="Repeat every day?" HorizontalAlignment="Center" Foreground="White"
+                <CheckBox Grid.Row="2" Content="Repeat every day?" HorizontalAlignment="Center" Foreground="{StaticResource FGColor}"
                           IsChecked="{Binding IsNewToDoItemEverDay}"/>
                 <Button Grid.Row="3" Content="Apply" Style="{DynamicResource ToDoItemActionButton}"
                         Command="{Binding CreateNewToDoItemCommand}"/>
@@ -72,7 +72,7 @@
         <!-- Popup, which process every action with already existing ToDoItem-->
         <Popup Style="{DynamicResource FadingAndTransparentPopup}" Placement="Center"
                Width="500" Height="320" IsOpen="{Binding ToDoItemPopup.IsOpened}">
-            <Grid Background="#1f1f1f">
+            <Grid Background="{StaticResource BGColor1}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="6*"/>

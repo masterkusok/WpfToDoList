@@ -73,11 +73,7 @@
         </Style>
 
         <Style TargetType="Button" x:Key="ToDoItemActionButton">
-            <Setter Property="Background">
-                <Setter.Value>
-                    <SolidColorBrush>#5065d9</SolidColorBrush>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Background" Value="{StaticResource OPColor}"/>
             <Setter Property="Foreground" Value="{StaticResource FGColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -96,7 +92,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Background" Value="{StaticResource FGColor}"/>
+                    <Setter Property="Background" Value="{StaticResource OPColor}"/>
                     <Setter Property="Cursor">
                         <Setter.Value>
                             <Cursor >

@@ -39,13 +39,7 @@ namespace WpfMvvmAppByMasterkusok.Models
 
         private void SetupDefaultConfiguration()
         {
-            Config.CurrentTheme = new Theme()
-            {
-                BGBrush1 = new SolidColorBrush(Color.FromRgb(46, 46, 46)),
-                BGBrush2 = new SolidColorBrush(Color.FromRgb(26, 26, 26)),
-                FGBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
-                OPBrush = new SolidColorBrush(Color.FromRgb(80, 101, 217))
-            };
+            Config.CurrentTheme = Theme.LightTheme;
         }
 
         public void SaveConfiguration()
