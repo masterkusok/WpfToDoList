@@ -31,6 +31,10 @@ namespace WpfMvvmAppByMasterkusok.Views
             {
                 return new ViewSettingsView((ViewSettingsViewModel)value);
             }
+            else if(value is RegisterViewModel)
+            {
+                return new RegisterPage((RegisterViewModel)value);
+            }
             else
             {
                 throw new Exception("Client is trying to switch to unknown viewmodel.");

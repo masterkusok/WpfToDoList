@@ -12,11 +12,10 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
     {
         private const int ErrorPopupTimer = 5000;
 
-        private string _password ="";
-        private string _username ="";
+        private string _password = string.Empty;
+        private string _username = string.Empty;
 
         private bool _controlsEnabled = true;
-        private bool _isRegistrationMode = false;
         private bool _rememberUser = false;
         private bool _canConnectToDB = false;
 
@@ -25,7 +24,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         public Dictionary<string, PopupRepresenter> PagePopups { get; set; }
         public string ErrorPopupMessage { get; set; }
 
-        public bool RegistrationMode { get => _isRegistrationMode; set => _isRegistrationMode = value; }
         public bool ControlsEnabled { get => _controlsEnabled; set => _controlsEnabled = value; }
         public bool RememberUser { get => _rememberUser; set => _rememberUser = value; }
 
@@ -36,7 +34,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         public ICommand LoginCommand { get; set; }
         public ICommand RegisterCommand { get; set; }
-        public ICommand SwitchRegisterMode { get; set; }
+        public ICommand GoToRegisterPageCommand { get; set; }
 
         public LoginViewModel(NavigationStore navigationStore, IConfigManager configManager)
         {
@@ -52,13 +50,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             {
                 LoginBtnClicked(obj);
             });
-            SwitchRegisterMode = new RelayCommand(obj =>
+            GoToRegisterPageCommand = new RelayCommand(obj =>
             {
-                SwitchRegisterModeClicked();
-            });
-            RegisterCommand = new RelayCommand(obj =>
-            {
-                TryToRegister(obj);
+                GoToRegisterPage();
             });
         }
 
@@ -70,17 +64,9 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups.Add("RegisterSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
         }
 
-        private void SwitchRegisterModeClicked()
+        private void GoToRegisterPage()
         {
-            if (!_isRegistrationMode)
-            {
-                _isRegistrationMode = true;
-            }
-            else
-            {
-                _isRegistrationMode = false;
-            }
-            NotifyOnPropertyChanged(nameof(RegistrationMode));
+            ChangeCurrentVM(new RegisterViewModel(_navigationStore, _configManager));
         }
 
         private async void LoginBtnClicked(object parameter)
@@ -174,55 +160,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         private bool CheckIfUsernameAndPasswordAreValid()
         {
             return string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password);
-        }
-
-        private async void TryToRegister(object parameter)
-        {
-            BlockAllControls();
-            PagePopups["LoaderPopup"].Open();
-
-            await Task.Delay(1500);
-            await Task.Run(() => {
-                _canConnectToDB = _dbService.CanBeConnected();
-            });
-
-            if (!_canConnectToDB)
-            {
-                ShowErrorPopupMessage("Error during connecting");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (CheckIfUsernameAndPasswordAreValid())
-            {
-                ShowErrorPopupMessage("Invalid username or password");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            await Task.Run(() =>
-            {
-                PagePopups["LoaderPopup"].Close();
-                if (_dbService.AddUser(_username, _password))
-                {
-                    DisplayRegisterSuccessPopupAndRedirect();
-                    return;
-                }
-                ShowErrorPopupMessage("Error. Please, try againg later");
-                UnlockAllControls();
-            });
-          
-        }
-        
-        private async void DisplayRegisterSuccessPopupAndRedirect()
-        {
-            PagePopups["RegisterSuccessfullyPopup"].ShowWithTimer(ErrorPopupTimer);
-            await Task.Delay(ErrorPopupTimer);
-            ChangeCurrentVM(new LoginViewModel(_navigationStore, _configManager));
-            UnlockAllControls();
         }
 
     }
