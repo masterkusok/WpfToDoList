@@ -17,7 +17,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private bool _controlsEnabled = true;
         private bool _rememberUser = false;
-        private bool _canConnectToDB = false;
 
         private User _loginedUser = null!;
 
@@ -44,8 +43,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _dbService = new SqlService();
             _configManager = configManager;
 
-            _canConnectToDB = _dbService.CanBeConnected();
-
             LoginCommand = new RelayCommand(obj =>
             {
                 LoginBtnClicked(obj);
@@ -69,78 +66,23 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             ChangeCurrentVM(new RegisterViewModel(_navigationStore, _configManager));
         }
 
-        private async void LoginBtnClicked(object parameter)
+        private void OpenLoaderPopup()
         {
-            BlockAllControls();
             PagePopups["LoaderPopup"].Open();
+        }
 
-            // This delay allows user to enjoy beautiful loader animation UwU
-            await Task.Delay(1500);
-
-            await Task.Run(() => {
-                _canConnectToDB = _dbService.CanBeConnected();
-            });
-
-            if (!_canConnectToDB)
-            {
-                ShowErrorPopupMessage("Error during connecting to server");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            GetPasswordFromPasswordBox((PasswordBox)parameter);
-            if (CheckIfUsernameAndPasswordAreValid())
-            {
-                ShowErrorPopupMessage("Invalid username or password");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            await Task.Run(() =>
-            {
-                if (!_dbService.CheckUserExists(_username, _password))
-                {
-                    ShowErrorPopupMessage("Can't find such user");
-                    PagePopups["LoaderPopup"].Close();
-                    UnlockAllControls();
-                    return;
-                }
-                _loginedUser = _dbService.GetUser(_username, _password);
-            });
-
-            if(_loginedUser == null)
-            {
-                ShowErrorPopupMessage("Can't find such user");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            SaveLoginedUserToConfigIfNeccessary();
+        private void CloseLoaderPopup()
+        {
             PagePopups["LoaderPopup"].Close();
-            UnlockAllControls();
-            ChangeCurrentVM(new MainPageViewModel(_navigationStore, _loginedUser, _configManager));
         }
-        
-        private void SaveLoginedUserToConfigIfNeccessary()
-        {
-            if (_rememberUser)
-            {
-                _configManager.Config.LoginedUser = _loginedUser;
-                _configManager.SaveConfiguration();
-            }
-        }
-
-        private void GetPasswordFromPasswordBox(PasswordBox box)
-        {
-            _password = box.Password;
-        }
-
         private void BlockAllControls()
         {
             _controlsEnabled = false;
+            NotifyOnPropertyChanged(nameof(ControlsEnabled));
+        }
+        private void UnlockAllControls()
+        {
+            _controlsEnabled = true;
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
@@ -151,16 +93,80 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups["ErrorPopup"].ShowWithTimer(ErrorPopupTimer);
         }
 
-        private void UnlockAllControls()
+        private void GetPasswordFromPasswordBox(PasswordBox box)
         {
-            _controlsEnabled = true;
-            NotifyOnPropertyChanged(nameof(ControlsEnabled));
+            _password = box.Password;
         }
 
-        private bool CheckIfUsernameAndPasswordAreValid()
+        private async void LoginBtnClicked(object parameter)
+        {
+            bool success = false;
+
+            GetPasswordFromPasswordBox((PasswordBox)parameter);
+            OpenLoaderPopup();
+            BlockAllControls();
+            await Task.Delay(1500);
+            await Task.Run(() =>
+            {
+                success = TryToLogin();
+            });
+
+            CloseLoaderPopup();
+            if (success)
+            {
+                SaveLoginedUserToConfigIfNeccessary();
+                ChangeCurrentVM(new MainPageViewModel(_navigationStore, _loginedUser, _configManager));
+                return;
+            }
+            UnlockAllControls();
+        }
+        
+        private bool TryToLogin()
+        {
+            if (CannotConnectDB())
+            {
+                ShowErrorPopupMessage("Error. Can't connect to server");
+                return false;
+            }
+
+            if (UsernameOrPasswordAreInvalid())
+            {
+                ShowErrorPopupMessage("Invalid username or password");
+                return false;
+            }
+
+            if (UserDoesNotExist())
+            {
+                ShowErrorPopupMessage("Can't find such user");
+                return false;
+            }
+
+            _loginedUser = _dbService.GetUser(_username, _password);
+            return true;
+        }
+
+        private bool CannotConnectDB()
+        {
+            return !_dbService.CanBeConnected();
+        }
+
+        private bool UsernameOrPasswordAreInvalid()
         {
             return string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password);
         }
 
+        private bool UserDoesNotExist()
+        {
+            return !_dbService.CheckUserExists(Username, string.Empty);
+        }
+
+        private void SaveLoginedUserToConfigIfNeccessary()
+        {
+            if (_rememberUser)
+            {
+                _configManager.Config.LoginedUser = _loginedUser;
+                _configManager.SaveConfiguration();
+            }
+        }
     }
 }
