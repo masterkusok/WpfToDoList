@@ -47,7 +47,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             _canConnectToDB = _dbService.CanBeConnected();
             RegisterCommand = new RelayCommand(obj =>
             {
-                TryToRegister(obj);
+                RegisterBtnClicked(obj);
             });
             GoBackToLoginPageCommand = new RelayCommand(obj =>
             {
@@ -62,7 +62,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("RegisterSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
         }
-        
         private void GetPasswordFromPasswordBox(object obj)
         {
             object[] boxes = (object[])obj;
@@ -89,58 +88,80 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
             NotifyOnPropertyChanged(nameof(ControlsEnabled));
         }
 
-        private bool CheckIfUsernameAndPasswordAreValid()
+        private void OpenLoaderPopup()
+        {
+            PagePopups["LoaderPopup"].Open();
+        }
+
+        private void CloseLoaderPopup()
+        {
+            PagePopups["LoaderPopup"].Close();
+        }
+
+        private async void RegisterBtnClicked(object parameter)
+        {
+            bool success = false;
+
+            GetPasswordFromPasswordBox(parameter);
+            OpenLoaderPopup();
+            BlockAllControls();
+            await Task.Delay(1500);
+            await Task.Run(() =>
+            {
+                success = TryToRegisterUser();
+            });
+
+            CloseLoaderPopup();
+            if (success)
+            {
+                DisplayRegisterSuccessPopupAndRedirect();
+                return;
+            }
+            UnlockAllControls();
+        }
+
+        private bool TryToRegisterUser()
+        {
+            if (CannotConnectDB())
+            {
+                ShowErrorPopupMessage("Error. Can't connect to server");
+                return false;
+            }
+
+            if (UsernameAndPasswordAreInvalid())
+            {
+                ShowErrorPopupMessage("Invalid username or password");
+                return false;
+            }
+
+            if (_dbService.CheckUserExists(_username, String.Empty))
+            {
+                ShowErrorPopupMessage("Username is already taken");
+                return false;
+            }
+
+            if (_password != _passwordRepeat)
+            {
+                ShowErrorPopupMessage("Passwords do not match");
+                return false;
+            }
+
+            if(!_dbService.AddUser(_username, _password))
+            {
+                ShowErrorPopupMessage("Unknown error during register");
+                return false;
+            }
+            return true;
+        }
+
+        private bool UsernameAndPasswordAreInvalid()
         {
             return string.IsNullOrEmpty(_username) || string.IsNullOrEmpty(_password);
         }
 
-        private async void TryToRegister(object parameter)
+        private bool CannotConnectDB()
         {
-            BlockAllControls();
-            PagePopups["LoaderPopup"].Open();
-
-            await Task.Delay(1500);
-            await Task.Run(() => {
-                _canConnectToDB = _dbService.CanBeConnected();
-            });
-
-            if (!_canConnectToDB)
-            {
-                ShowErrorPopupMessage("Error during connecting");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            GetPasswordFromPasswordBox(parameter);
-            if (CheckIfUsernameAndPasswordAreValid())
-            {
-                ShowErrorPopupMessage("Invalid username or password");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            if(_password != _passwordRepeat)
-            {
-                ShowErrorPopupMessage("Passwords do not match");
-                PagePopups["LoaderPopup"].Close();
-                UnlockAllControls();
-                return;
-            }
-
-            await Task.Run(() =>
-            {
-                PagePopups["LoaderPopup"].Close();
-                if (_dbService.AddUser(_username, _password))
-                {
-                    DisplayRegisterSuccessPopupAndRedirect();
-                    return;
-                }
-                ShowErrorPopupMessage("Error. Please, try againg later");
-                UnlockAllControls();
-            });
-
+            return !_dbService.CanBeConnected();
         }
 
         private async void DisplayRegisterSuccessPopupAndRedirect()
