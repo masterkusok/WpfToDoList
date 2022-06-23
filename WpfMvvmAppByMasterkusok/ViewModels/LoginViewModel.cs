@@ -38,7 +38,8 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
         public LoginViewModel(NavigationStore navigationStore, IConfigManager configManager)
         {
             SetupPopups();
-           
+            PagePopups = new Dictionary<string, PopupRepresenter>();
+
             _navigationStore = navigationStore;
             _dbService = new SqlService();
             _configManager = configManager;
@@ -55,7 +56,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void SetupPopups()
         {
-            PagePopups = new Dictionary<string, PopupRepresenter>();
             PagePopups.Add("LoaderPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("RegisterSuccessfullyPopup", new PopupRepresenter("PagePopups", this));

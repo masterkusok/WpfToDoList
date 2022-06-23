@@ -36,6 +36,7 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         public RegisterViewModel(NavigationStore navigationStore, IConfigManager manager)
         {
+            PagePopups = new Dictionary<string, PopupRepresenter>();
             SetupPopups();
 
             ErrorPopupMessage = String.Empty;
@@ -57,7 +58,6 @@ namespace WpfMvvmAppByMasterkusok.ViewModels
 
         private void SetupPopups()
         {
-            PagePopups = new Dictionary<string, PopupRepresenter>();
             PagePopups.Add("LoaderPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("ErrorPopup", new PopupRepresenter("PagePopups", this));
             PagePopups.Add("RegisterSuccessfullyPopup", new PopupRepresenter("PagePopups", this));
